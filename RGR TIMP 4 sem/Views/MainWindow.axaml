@@ -1,0 +1,12 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:RGR_TIMP_4_sem.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:RGR_TIMP_4_sem.Views"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
+        x:Class="RGR_TIMP_4_sem.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="RGR_TIMP_4_sem">
+        <views:MainView />
+</Window>

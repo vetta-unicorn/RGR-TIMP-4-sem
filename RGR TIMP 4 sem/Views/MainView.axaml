@@ -1,0 +1,63 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:RGR_TIMP_4_sem.ViewModels"
+			 xmlns:local="clr-namespace:RGR_TIMP_4_sem.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
+             x:Class="RGR_TIMP_4_sem.Views.MainView"
+             x:DataType="vm:MainViewModel">
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
+         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:MainViewModel />
+	</Design.DataContext>
+
+	<UserControl.Resources>
+		<local:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
+	</UserControl.Resources>
+
+
+	<StackPanel>
+		<ItemsControl ItemsSource="{Binding Cells}" Margin="50, 30, 50, 0" HorizontalAlignment="Center">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel Orientation="Horizontal"/>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<Border BorderBrush="Black" BorderThickness="1" Margin="2" Width="50" Height="40"
+							Background="{Binding IsSelected, Converter={StaticResource BoolToBrushConverter}}">
+						<TextBlock Text="{Binding Index}" Padding="10"/>
+					</Border>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+
+		<!-- Новая полоска для индексов -->
+		<ItemsControl ItemsSource="{Binding Cells}" Margin="50, 0, 50, 0" HorizontalAlignment="Center">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel Orientation="Horizontal"/>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<Border BorderBrush="Black" BorderThickness="1" Margin="2" Height="50" Width="50">
+						<TextBlock Text="{Binding Value}" Padding="10"/>
+					</Border>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+
+		<DockPanel Margin="5">
+			<Button Content="Left Button" Width="50" Height="50" DockPanel.Dock="Left" HorizontalAlignment="Left"/>
+			<Button Content="Right Button" Width="50" Height="50" DockPanel.Dock="Right" HorizontalAlignment="Right"/>
+		</DockPanel>
+
+	</StackPanel>
+
+
+
+</UserControl>
