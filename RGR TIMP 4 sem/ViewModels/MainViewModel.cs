@@ -1,52 +1,20 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Reactive;
 using System.Reflection;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using ReactiveUI;
+using RGR_TIMP_4_sem.Models;
 
 namespace RGR_TIMP_4_sem.ViewModels;
 
-public class CellModel : ReactiveObject
+public class MainViewModel : ReactiveObject
 {
-    private int _value;
-    private int _index;
-    private bool _isSelected;
-    public int Value
-    {
-        get => _value;
-        set => this.RaiseAndSetIfChanged(ref _value, value);
-    }
+    public ReactiveCommand<Unit, Unit> ButtonClickCommandLeft { get; }
+    public ReactiveCommand<Unit, Unit> ButtonClickCommandRight { get; }
 
-    public int Index
-    {
-        get => _index;
-        set => this.RaiseAndSetIfChanged(ref _index, value);
-    }
-
-    public bool IsSelected
-    {
-        get => _isSelected;
-        set => this.RaiseAndSetIfChanged(ref _isSelected, value);
-    }
-}
-
-public class BoolToBrushConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        return (bool)value ? Brushes.Red : Brushes.Transparent; // или любой другой цвет по умолчанию
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public class MainViewModel : ViewModelBase
-{
     // здесь будут храниться ячейки, которые показываются на экране
     public ObservableCollection<CellModel> Cells { get; }
 
@@ -55,10 +23,16 @@ public class MainViewModel : ViewModelBase
     public int cell_num {  get; set; }
     public int all_cell_num {  get; set; }
 
+    public int current_index { get; set; }
+
     public MainViewModel()
     {
+        // команды для кнопок
+        ButtonClickCommandLeft = ReactiveCommand.Create(OnButtonClickLeft);
+        ButtonClickCommandRight = ReactiveCommand.Create(OnButtonClickRight);
+
         cell_num = 19;
-        all_cell_num = 200;
+        all_cell_num = 201;
 
         Cells = new ObservableCollection<CellModel>();
         ExtendedCells = new ObservableCollection<CellModel>();
@@ -73,8 +47,58 @@ public class MainViewModel : ViewModelBase
         SetCell(-5, 1);
         SetCell(8, 1);
 
-        SelectCell(0);
+        current_index = 0;
+        SelectCell(current_index);
     }
+
+    private void OnButtonClickLeft()
+    {
+        for (int i = 0; i < cell_num; i++)
+        {
+            Cells[i].Index--;
+
+            foreach (var _cell in ExtendedCells)
+            {
+                if (_cell.Index == Cells[i].Index)
+                {
+                    Cells[i].Value = _cell.Value;
+                    break;
+                }
+            }
+        }
+        SelectCell(current_index);
+    }
+
+    private void OnButtonClickRight()
+    {
+        for (int i = 0; i < cell_num; i++)
+        {
+            Cells[i].Index++;
+
+            foreach (var _cell in ExtendedCells)
+            {
+                if (_cell.Index == Cells[i].Index)
+                {
+                    Cells[i].Value = _cell.Value;
+                    break;
+                }
+            }
+        }
+        SelectCell(current_index);
+    }
+
+    //public int FindCellValue(ObservableCollection<CellModel> _Cells, int index)
+    //{
+    //    int value = -1;
+    //    foreach(var _cell in _Cells)
+    //    {
+    //        if (_cell.Index == index)
+    //        {
+    //            value = _cell.Value;
+    //        }
+    //    }
+    //    return value;
+    //}
 
     public void CellInitialize(ObservableCollection<CellModel> _Cells, int _cell_num)
     {
@@ -97,19 +121,60 @@ public class MainViewModel : ViewModelBase
     }
 
 
-    public void SetCell(int index, int num)
+    public void SetCell(int index, int val)
     {
-        foreach(var cell in Cells)
+        int maxIndex = FindMaxIndex();
+        int minIndex = FindMinIndex();
+        for (int i = 0; i < all_cell_num; i++)
         {
-            if (cell.Index == index)
+            if (ExtendedCells[i].Index == index)
             {
-                cell.Value = num;
+                ExtendedCells[i].Value = val;
+            }
+        }
+
+        for (int i = 0; i < cell_num; i++)
+        {
+            if (Cells[i].Index == index)
+            {
+                Cells[i].Value = val;
             }
         }
     }
 
+    public int FindMinIndex()
+    {
+        int minVal = int.MaxValue;
+        foreach (var _cell in Cells)
+        {
+            if (_cell.Index < minVal)
+            {
+                minVal = _cell.Index;
+            }
+        }
+        return minVal;
+    }
+
+    public int FindMaxIndex()
+    {
+        int maxVal = int.MinValue;
+        foreach (var _cell in Cells)
+        {
+            if (_cell.Index > maxVal)
+            {
+                maxVal = _cell.Index;
+            }
+        }
+        return maxVal;
+    }
+
     public void SelectCell(int index)
     {
+        foreach (var e_cell in ExtendedCells)
+        {
+            e_cell.IsSelected = (e_cell.Index == index);
+        }
+
         foreach (var cell in Cells)
         {
             cell.IsSelected = (cell.Index == index);

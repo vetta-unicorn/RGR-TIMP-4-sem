@@ -52,9 +52,18 @@
 		</ItemsControl>
 
 		<DockPanel Margin="5">
-			<Button Content="Left Button" Width="50" Height="50" DockPanel.Dock="Left" HorizontalAlignment="Left"/>
-			<Button Content="Right Button" Width="50" Height="50" DockPanel.Dock="Right" HorizontalAlignment="Right"/>
+			<Button Command="{Binding ButtonClickCommandLeft}" Content="Left" Width="50" Height="50" DockPanel.Dock="Left" HorizontalAlignment="Left"/>
+			<Button Command="{Binding ButtonClickCommandRight}" Content="Right" Width="50" Height="50" DockPanel.Dock="Right" HorizontalAlignment="Right"/>
 		</DockPanel>
+
+		<Grid ColumnDefinitions="*, 7*" RowDefinitions="5*, 5*, 5*, 5*, 5*, 5*" ShowGridLines="True" Margin="4">
+			<TextBlock Text="Number" Grid.Row="0" Grid.Column="0" Height="30"/>
+			<TextBlock Text="Commands:" Grid.Row="0" Grid.Column="1" Height="30"/>
+			<TextBlock Text="1)" Grid.Row="1" Grid.Column="0" Height="30" Width="50"/>
+			<TextBlock Text="Command 1" Grid.Row="1" Grid.Column="1"/>
+			<TextBlock Text="2)" Grid.Row="2" Grid.Column="0" Height="30" Width="50"/>
+			<TextBlock Text="Command 2" Grid.Row="2" Grid.Column="1"/>
+		</Grid>
 
 	</StackPanel>
 
