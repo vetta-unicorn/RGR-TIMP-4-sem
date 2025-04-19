@@ -27,7 +27,7 @@ namespace RGR_TIMP_4_sem.Models
         }
 
     }
-    public class RightMove : IBinCommand
+    public class RightMove : ICommand
     {
 
         public int Work(ICell cell)
@@ -47,7 +47,7 @@ namespace RGR_TIMP_4_sem.Models
 
     }
 
-    public class One : IBinCommand //один в клетку
+    public class One : ICommand //один в клетку
     {
 
         public int Work(ICell cell)
@@ -58,7 +58,7 @@ namespace RGR_TIMP_4_sem.Models
 
     }
 
-    public class Null : IBinCommand //ноль в клетку
+    public class Null : ICommand //ноль в клетку
     {
 
         public int Work(ICell cell)
@@ -69,7 +69,7 @@ namespace RGR_TIMP_4_sem.Models
 
     }
 
-    public class Stop : IBinCommand
+    public class Stop : ICommand
     {
 
         public int Work(ICell cell)
@@ -79,7 +79,7 @@ namespace RGR_TIMP_4_sem.Models
 
     }
 
-    public class Question : IBinCommand
+    public class Question : ICommand
     {
 
         public int Work(ICell cell)
