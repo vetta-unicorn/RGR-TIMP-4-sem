@@ -6,6 +6,7 @@ using System.Reflection;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using ReactiveUI;
+using RGR_TIMP_4_sem.Interfaces;
 using RGR_TIMP_4_sem.Models;
 
 namespace RGR_TIMP_4_sem.ViewModels;
@@ -16,10 +17,10 @@ public class MainViewModel : ReactiveObject
     public ReactiveCommand<Unit, Unit> ButtonClickCommandRight { get; }
 
     // здесь будут храниться ячейки, которые показываются на экране
-    public ObservableCollection<CellModel> Cells { get; }
+    public ObservableCollection<ICell> Cells { get; }
 
     // здесь будут показываться ВСЕ ячейки
-    public ObservableCollection<CellModel> ExtendedCells { get; }
+    public ObservableCollection<ICell> ExtendedCells { get; }
     public int cell_num {  get; set; }
     public int all_cell_num {  get; set; }
 
@@ -34,8 +35,8 @@ public class MainViewModel : ReactiveObject
         cell_num = 19;
         all_cell_num = 201;
 
-        Cells = new ObservableCollection<CellModel>();
-        ExtendedCells = new ObservableCollection<CellModel>();
+        Cells = new ObservableCollection<ICell>();
+        ExtendedCells = new ObservableCollection<ICell>();
 
         CellInitialize(Cells, cell_num);
         CellInitialize(ExtendedCells, all_cell_num);
@@ -100,11 +101,12 @@ public class MainViewModel : ReactiveObject
     //    return value;
     //}
 
-    public void CellInitialize(ObservableCollection<CellModel> _Cells, int _cell_num)
+    public void CellInitialize(ObservableCollection<ICell> _Cells, int _cell_num)
     {
         for (int i = 0; i < _cell_num; i++)
         {
-            _Cells.Add(new CellModel());
+            ICell a = new CellModel();
+            _Cells.Add(a);
             if (i == cell_num / 2)
             {
                 _Cells[i].Index = 0;
