@@ -24,6 +24,7 @@ public class MainViewModel : ReactiveObject
     public int cell_num {  get; set; }
     public int all_cell_num {  get; set; }
 
+    //индекс в глобальных координатах
     public int current_index { get; set; }
 
     public MainViewModel()
