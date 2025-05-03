@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RGR_TIMP_4_sem.Interfaces;
 
 namespace RGR_TIMP_4_sem.Models
 {
-    public class CellModel : ReactiveObject
+    public class CellModel : ReactiveObject, ICell
     {
         private int _value;
         private int _index;
