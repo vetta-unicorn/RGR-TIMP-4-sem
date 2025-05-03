@@ -9,10 +9,18 @@ namespace RGR_TIMP_4_sem.Models
 {
     public class strInTable: ITable
     {
+        private bool _isSelected;
         private int number;
         private ICommand command;
         private string? str;
         private string? comments;
+
+        public bool isSelected
+        {
+            get { return _isSelected; }
+            set { _isSelected = value; }
+
+        }
 
         public int Number
         {
@@ -35,16 +43,18 @@ namespace RGR_TIMP_4_sem.Models
             get { return comments; }
             set { comments = value; }
         }
-        public strInTable(int number, ICommand command, string? str, string? comments)
+        public strInTable(bool selected, int number, ICommand command, string? str, string? comments)
         {
+            this._isSelected = selected;
             this.number = number;
             this.command = command;
             this.str = str;
             this.comments = comments;
         }
 
-        public strInTable(int number, ICommand command)
+        public strInTable(bool selected, int number, ICommand command)
         {
+            this._isSelected = selected;
             this.number = number;
             this.command = command;
         }
