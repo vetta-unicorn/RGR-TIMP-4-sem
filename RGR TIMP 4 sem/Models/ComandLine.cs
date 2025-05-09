@@ -7,15 +7,15 @@ using RGR_TIMP_4_sem.Interfaces;
 
 namespace RGR_TIMP_4_sem.Models
 {
-    public class strInTable: ITable
+    public class ComandLine: IComandLine
     {
         private bool _isSelected;
         private int number;
         private ICommand command;
-        private string? str;
+        private string? str; 
         private string? comments;
 
-        public bool isSelected
+        public bool IsSelected
         {
             get { return _isSelected; }
             set { _isSelected = value; }
@@ -43,7 +43,7 @@ namespace RGR_TIMP_4_sem.Models
             get { return comments; }
             set { comments = value; }
         }
-        public strInTable(bool selected, int number, ICommand command, string? str, string? comments)
+        public ComandLine(bool selected, int number, ICommand command, string? str, string? comments)
         {
             this._isSelected = selected;
             this.number = number;
@@ -52,7 +52,7 @@ namespace RGR_TIMP_4_sem.Models
             this.comments = comments;
         }
 
-        public strInTable(bool selected, int number, ICommand command)
+        public ComandLine(bool selected, int number, ICommand command)
         {
             this._isSelected = selected;
             this.number = number;
