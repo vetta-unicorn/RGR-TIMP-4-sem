@@ -16,10 +16,10 @@ namespace RGR_TIMP_4_sem.Models
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="indexMove"> сколько действий делать за 1 нажатие, если -1 то делать весь алгоритм</param>
-        /// <param name="WorkingCell"> лист видимых клеток </param>
-        /// <param name="Table"> лист строк алгоритма</param>
-        /// <returns>возвращает 1 если выполнено, 
+        /// <param name="indexMove"> до какой строки делать за 1 нажатие, если -1 то делать весь алгоритм</param>
+        /// <param name="WorkingCell"> ObservableCollection клеток (видимых) </param>
+        /// <param name="Table"> ObservableCollection строк алгоритма</param>
+        /// <returns>возвращает строку если выполнено, 
         /// 0 если кончились строки, 
         /// -1 если бесконечный цикл</returns>
         public string Working (int indexMove, ObservableCollection<ICell> Cells, ObservableCollection<IComandLine> ComandLine)
@@ -61,20 +61,13 @@ namespace RGR_TIMP_4_sem.Models
                             flag = ComandLine[now].Command.Work(Cells);
                             switchNumberLine(ComandLine, now+1);
                         }
-                    
                     }
                     catch (NullReferenceException)
                     {
-                          
+                        throw new NullReferenceException("The cell list is empty");
                     }
-
-
                 } 
             }
-
-
-
-
             return " ";
         }
 
