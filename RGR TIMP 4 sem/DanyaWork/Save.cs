@@ -1,13 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.Json;
-using System;
-using RGR_TIMP_4_sem.Models;
 
 namespace RGR_TIMP_4_sem.DanyaWork
 {
     public class Save
     {
-        public void SaveData(string directoryPath, string fileName, dynamic fileContent)
+        public bool SaveData(string directoryPath, string fileName, dynamic fileContent)
         {
             try
             {
@@ -22,15 +21,17 @@ namespace RGR_TIMP_4_sem.DanyaWork
                     WriteIndented = true,
 
                     // Сохраняет кодировку текста в "читабильном" виде
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 };
                 var jsonContent = JsonSerializer.Serialize(fileContent, JsonFormater);
                 File.WriteAllText(filePath, jsonContent);
+                return true;
             }
             catch (Exception ex)
             {
                 throw new Exception($"Не удалось создать файл: {fileName} \n Ошибка: {ex}");
             }
+            return false;
         }
         private string GenerateUniqueName(string directoryPath, string baseName, string extension)
         {

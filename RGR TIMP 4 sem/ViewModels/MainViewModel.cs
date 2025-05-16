@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Globalization;
+﻿using System.Collections.ObjectModel;
 using System.Reactive;
-using System.Reflection;
-using Avalonia.Data.Converters;
-using Avalonia.Media;
 using ReactiveUI;
 using RGR_TIMP_4_sem.Interfaces;
 using RGR_TIMP_4_sem.Models;
@@ -21,8 +16,8 @@ public class MainViewModel : ReactiveObject
 
     // здесь будут показываться ВСЕ ячейки
     public ObservableCollection<ICell> ExtendedCells { get; }
-    public int cell_num {  get; set; }
-    public int all_cell_num {  get; set; }
+    public int cell_num { get; set; }
+    public int all_cell_num { get; set; }
 
     //индекс в глобальных координатах
     public int current_index { get; set; }

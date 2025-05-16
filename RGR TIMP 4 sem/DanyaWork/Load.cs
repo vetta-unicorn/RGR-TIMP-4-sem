@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using RGR_TIMP_4_sem.Models;
 
 namespace RGR_TIMP_4_sem.DanyaWork
@@ -12,9 +10,9 @@ namespace RGR_TIMP_4_sem.DanyaWork
     public class Load
     {
         //Deserialize From Directory
-        public List<strInTable> LoadData(string directoryPath, string searchPattern)
+        public List<ComandLine> LoadData(string directoryPath, string searchPattern)
         {
-            List<strInTable> items = new List<strInTable>();
+            List<ComandLine> items = new List<ComandLine>();
             if (Directory.Exists(directoryPath))
             {
                 foreach (var filePath in Directory.GetFiles(directoryPath, searchPattern))
@@ -22,15 +20,22 @@ namespace RGR_TIMP_4_sem.DanyaWork
                     try
                     {
                         string fileContent = File.ReadAllText(filePath);
-                        strInTable deserializeItem = JsonSerializer.Deserialize<strInTable>(fileContent);
+                        List<ComandLine> deserializeItem = JsonSerializer.Deserialize<List<ComandLine>>(fileContent);
                         if (deserializeItem != null)
                         {
-                            items.Add(deserializeItem);
+                            foreach (var item in deserializeItem)
+                            {
+                                items.Add(item);
+                            }
+                        }
+                        else
+                        {
+                            throw new NullReferenceException("deserialize item is null");
                         }
                     }
                     catch (Exception ex)
                     {
-                       throw new Exception($"Ошибка при обработки файла {filePath}:{ex.Message}");
+                        throw new Exception($"Ошибка при обработки файла {filePath}:{ex.Message}");
                     }
                 }
             }
