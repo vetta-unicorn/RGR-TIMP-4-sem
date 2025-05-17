@@ -89,19 +89,6 @@ public class MainViewModel : ReactiveObject
         SelectCell(current_index);
     }
 
-    //public int FindCellValue(ObservableCollection<CellModel> _Cells, int index)
-    //{
-    //    int value = -1;
-    //    foreach(var _cell in _Cells)
-    //    {
-    //        if (_cell.Index == index)
-    //        {
-    //            value = _cell.Value;
-    //        }
-    //    }
-    //    return value;
-    //}
-
     public void CellInitialize(ObservableCollection<ICell> _Cells, int _cell_num)
     {
         for (int i = 0; i < _cell_num; i++)

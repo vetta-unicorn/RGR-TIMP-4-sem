@@ -14,7 +14,7 @@ namespace RGR_TIMP_4_sem.Models
     {
 
         /// <summary>
-        /// 
+        /// Бинарный алгоритм
         /// </summary>
         /// <param name="indexMove"> до какой строки делать за 1 нажатие, если -1 то делать весь алгоритм</param>
         /// <param name="WorkingCell"> ObservableCollection клеток (видимых) </param>
@@ -105,6 +105,7 @@ namespace RGR_TIMP_4_sem.Models
             }
         }
 
+        //пофиксить выход за пределы массива ObservableCollection<IComandLine> ? 1,7 когда всего 6 строк
         public void switchNumberLine(ObservableCollection<IComandLine> ComandLine, int index)
         {
             if (ComandLine == null)
