@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RGR TIMP 4 sem", "RGR TIMP 4 sem\RGR TIMP 4 sem.csproj", "{64FF5A98-6E08-4D4F-AE8D-25F2503D830D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RGR TIMP 4 sem.Desktop", "RGR TIMP 4 sem.Desktop\RGR TIMP 4 sem.Desktop.csproj", "{7785A096-A96E-4A18-836D-ECB2803E74B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConloseForDanya", "ConloseForDanya\ConloseForDanya.csproj", "{EF5AE5B4-E736-40C4-8934-FCF2A06C1B94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +23,15 @@ Global
 		{7785A096-A96E-4A18-836D-ECB2803E74B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7785A096-A96E-4A18-836D-ECB2803E74B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7785A096-A96E-4A18-836D-ECB2803E74B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF5AE5B4-E736-40C4-8934-FCF2A06C1B94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF5AE5B4-E736-40C4-8934-FCF2A06C1B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF5AE5B4-E736-40C4-8934-FCF2A06C1B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF5AE5B4-E736-40C4-8934-FCF2A06C1B94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CC741FCD-9C41-4E2D-8925-1080D5FE4CDF}
 	EndGlobalSection
 EndGlobal

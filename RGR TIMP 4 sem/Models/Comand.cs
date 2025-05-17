@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using RGR_TIMP_4_sem.Interfaces;
 
@@ -15,6 +16,9 @@ namespace RGR_TIMP_4_sem.Models
     public class LeftMove: ICommand
     {
 
+        private readonly string name = "->";
+        public string NameCommand { get { return name; } }
+        public LeftMove() { }
         public int Work(ObservableCollection<ICell> Cells)
         {
             if (Cells == null)
@@ -42,7 +46,8 @@ namespace RGR_TIMP_4_sem.Models
 
     public class RightMove : ICommand
     {
-
+        private readonly string name = "<-";
+        public string NameCommand { get { return name; } }
         public int Work(ObservableCollection<ICell> Cells)
         {
             if (Cells == null)
@@ -70,7 +75,8 @@ namespace RGR_TIMP_4_sem.Models
 
     public class One : ICommand //один в клетку
     {
-
+        private readonly string name = "1";
+        public string NameCommand { get { return name; } }
         public int Work(ObservableCollection<ICell> Cells)
         {
             if (Cells == null)
@@ -98,7 +104,8 @@ namespace RGR_TIMP_4_sem.Models
 
     public class Null : ICommand //ноль в клетку
     {
-
+        private readonly string name = "0";
+        public string NameCommand { get { return name; } }
         public int Work(ObservableCollection<ICell> Cells)
         {
             if (Cells == null)
@@ -126,7 +133,8 @@ namespace RGR_TIMP_4_sem.Models
 
     public class Stop : ICommand
     {
-
+        private readonly string name = "Stop";
+        public string NameCommand { get { return name; } }
         public int Work(ObservableCollection<ICell> Cells)
         {
             if (Cells == null)
@@ -141,7 +149,8 @@ namespace RGR_TIMP_4_sem.Models
 
     public class Question : ICommand
     {
-
+        private readonly string name = "?";
+        public string NameCommand { get { return name; } }
         public int Work(ObservableCollection<ICell> Cells)
         {
 
