@@ -41,7 +41,7 @@ namespace RGR_TIMP_4_sem.Models
                     int now = Number_of_SelectedStr(ComandLine);
                     if (now==indexMove)
                     {
-                        return "The commands were successfully completed.";
+                        return ($"The commands were successfully completed - {indexMove}");
                     }
                     if(count_cycle==1000)
                      {
