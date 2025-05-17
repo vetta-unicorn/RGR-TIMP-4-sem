@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RGR_TIMP_4_sem.Interfaces;
+﻿using RGR_TIMP_4_sem.Interfaces;
 
 namespace RGR_TIMP_4_sem.Models
 {
-    public class ComandLine: IComandLine
+    public class ComandLine : IComandLine
     {
         private bool _isSelected;
         private int number;
@@ -19,7 +14,6 @@ namespace RGR_TIMP_4_sem.Models
         {
             get { return _isSelected; }
             set { _isSelected = value; }
-
         }
 
         public int Number
@@ -32,7 +26,6 @@ namespace RGR_TIMP_4_sem.Models
             get { return command; }
             set { command = value; }
         }
-
         public string? Str
         {
             get { return str; }
@@ -58,5 +51,6 @@ namespace RGR_TIMP_4_sem.Models
             this.number = number;
             this.command = command;
         }
+        public ComandLine() { }
     }
 }

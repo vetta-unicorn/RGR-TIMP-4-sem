@@ -1,12 +1,7 @@
-﻿using Avalonia.Data.Converters;
-using Avalonia.Media;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RGR_TIMP_4_sem.Models;
+using Avalonia.Data.Converters;
+using Avalonia.Media;
 
 namespace RGR_TIMP_4_sem.ViewModels
 {
