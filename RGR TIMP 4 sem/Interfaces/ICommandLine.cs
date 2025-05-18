@@ -8,7 +8,6 @@ namespace RGR_TIMP_4_sem.Interfaces
 {
     public interface ICommandLine
     {
-
         public bool IsSelected { get; set; }
         public int Number { get; set; }
         public ICommand Command { get; set; }

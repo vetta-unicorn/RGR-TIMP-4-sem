@@ -3,20 +3,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:RGR_TIMP_4_sem.ViewModels"
-			 xmlns:local="clr-namespace:RGR_TIMP_4_sem.ViewModels"
+             xmlns:local="clr-namespace:RGR_TIMP_4_sem.ViewModels"
              mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
              x:Class="RGR_TIMP_4_sem.Views.MainView"
              x:DataType="vm:MainViewModel">
 	<Design.DataContext>
-		<!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainViewModel />
 	</Design.DataContext>
 
 	<UserControl.Resources>
 		<local:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
 	</UserControl.Resources>
-
 
 	<StackPanel>
 		<ItemsControl ItemsSource="{Binding Cells}" Margin="50, 30, 50, 0" HorizontalAlignment="Center">
@@ -56,38 +53,56 @@
 			<Button Command="{Binding ButtonClickCommandRight}" Content="Right" Width="50" Height="50" DockPanel.Dock="Right" HorizontalAlignment="Right"/>
 		</DockPanel>
 
+		<DockPanel Margin="5">
+			<Button Content="Add Row" Command="{Binding AddRowCommand}" />
+		</DockPanel>
+
+		<Border Background="Beige"
+          BorderBrush="Black"
+          BorderThickness="2"
+          Padding="15">
+			<StackPanel Background="White"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Top">
 		<Grid>
-			<ItemsControl ItemsSource ="{Binding CommandLines}">
+			<ItemsControl ItemsSource="{Binding CommandLines}"> 
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
 						<Grid>
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="50" />
+								<ColumnDefinition Width="150" />
+								<ColumnDefinition Width="200" />
+								<ColumnDefinition Width="400" />
 							</Grid.ColumnDefinitions>
 
 							<TextBlock Grid.Column="0" Text="{Binding Number}" />
 							<ComboBox Grid.Column="1"
-									  SelectedItem="{Binding Command}"
-									  Items="{Binding Source={x:Static local:CommandList.Instance.Commands}}"
-									  DisplayMemberPath="Name" />
+									  Width="150"
+                                      SelectedItem="{Binding Command}"
+                                      ItemsSource="{Binding DataContext.AvailableCommands, RelativeSource={RelativeSource AncestorType=UserControl}}">
+								<ComboBox.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding NameCommand}" />
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+							</ComboBox>
 							<TextBox Grid.Column="2"
-									 Text="{Binding Str, UpdateSourceTrigger=PropertyChanged}"
-									 Watermark="*, *" />
+                                     Text="{Binding Str}"
+                                     Watermark="*, *" />
 							<TextBox Grid.Column="3"
-									 Text="{Binding Comments, UpdateSourceTrigger=PropertyChanged}"
-									 Watermark="Comment" />
+                                     Text="{Binding Comments}"
+                                     Watermark="Comment" />
 						</Grid>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
-			<Button Content="Add Row" Command="{Binding AddRowCommand}" />
+
+			
 		</Grid>
-
+		</StackPanel>
+		</Border>
 	</StackPanel>
-
-
-
 </UserControl>
+
+

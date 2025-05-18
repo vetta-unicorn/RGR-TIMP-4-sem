@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reactive;
 using ReactiveUI;
 using RGR_TIMP_4_sem.Interfaces;
@@ -30,6 +31,10 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref commandLines, value);
     }
 
+    public ReactiveCommand<Unit, Unit> AddRowCommand { get; }
+
+    public List<ICommand> AvailableCommands => CommandList.Instance.Commands;
+
     public MainViewModel()
     {
         // команды для кнопок
@@ -43,6 +48,7 @@ public class MainViewModel : ReactiveObject
         ExtendedCells = new ObservableCollection<ICell>();
 
         CommandLines = new ObservableCollection<ICommandLine>();
+        AddRowCommand = ReactiveCommand.Create(AddNewRow);
         AddNewRow();
 
         CellInitialize(Cells, cell_num);
@@ -55,11 +61,11 @@ public class MainViewModel : ReactiveObject
         //SetCell(-5, 1);
         //SetCell(8, 1);
 
-        //current_index = 0;
-        //SelectCell(current_index);
+        current_index = 0;
+        SelectCell(current_index);
     }
 
-    private void AddNewRow()
+    public void AddNewRow()
     {
         int rowNumber = CommandLines.Count; // Нумерация строк
         CommandLines.Add(new CommandLine { Number = rowNumber });

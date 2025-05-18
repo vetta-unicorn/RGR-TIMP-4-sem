@@ -14,7 +14,7 @@ namespace RGR_TIMP_4_sem.ViewModels
 
         public List<ICommand> Commands { get; }
 
-        private CommandList()
+        public CommandList()
         {
             Commands = new List<ICommand>
             {
