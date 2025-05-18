@@ -74,13 +74,15 @@
 					<DataTemplate>
 						<Grid>
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="50" />
-								<ColumnDefinition Width="150" />
-								<ColumnDefinition Width="200" />
-								<ColumnDefinition Width="400" />
+								<ColumnDefinition Width="50" /> 
+								<ColumnDefinition Width="150" /> 
+								<ColumnDefinition Width="200" /> 
+								<ColumnDefinition Width="400" /> 
 							</Grid.ColumnDefinitions>
 
-							<TextBlock Grid.Column="0" Text="{Binding Number}" />
+							<TextBlock Grid.Column="0"
+									   Text="{Binding Number}"
+									   Background="{Binding IsSelected, Converter={StaticResource BoolToBrushConverter}}" />
 							<ComboBox Grid.Column="1"
 									  Width="150"
                                       SelectedItem="{Binding Command}"

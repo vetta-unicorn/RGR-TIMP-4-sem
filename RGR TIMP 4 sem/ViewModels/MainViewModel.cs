@@ -53,6 +53,7 @@ public class MainViewModel : ReactiveObject
 
         CellInitialize(Cells, cell_num);
         CellInitialize(ExtendedCells, all_cell_num);
+        CommandLines[0].IsSelected = true;
 
         //SetCell(3, 1);
         //SetCell(-1, 1);
