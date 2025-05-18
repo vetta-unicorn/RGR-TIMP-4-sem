@@ -48,15 +48,19 @@
 			</ItemsControl.ItemTemplate>
 		</ItemsControl>
 
+		<!-- Кнопки перемещения по ленте -->
 		<DockPanel Margin="5">
 			<Button Command="{Binding ButtonClickCommandLeft}" Content="Left" Width="50" Height="50" DockPanel.Dock="Left" HorizontalAlignment="Left"/>
 			<Button Command="{Binding ButtonClickCommandRight}" Content="Right" Width="50" Height="50" DockPanel.Dock="Right" HorizontalAlignment="Right"/>
 		</DockPanel>
 
+		<!-- Кнопка добавления новой строки -->
 		<DockPanel Margin="5">
 			<Button Content="Add Row" Command="{Binding AddRowCommand}" />
 		</DockPanel>
 
+
+		<!-- Table с CommandLines -->
 		<Border Background="Beige"
           BorderBrush="Black"
           BorderThickness="2"
