@@ -22,9 +22,9 @@ namespace RGR_TIMP_4_sem.Models
         /// <returns>возвращает строку если выполнено, 
         /// 0 если кончились строки, 
         /// -1 если бесконечный цикл</returns>
-        public string Working (int indexMove, ObservableCollection<ICell> Cells, ObservableCollection<IComandLine> ComandLine)
+        public string Working(int indexMove, ObservableCollection<ICell> Cells, ObservableCollection<IComandLine> ComandLine)
         {
-            if(Cells==null)
+            if (Cells == null)
             {
                 throw new NullReferenceException("The cell list is empty");
             }
@@ -32,43 +32,49 @@ namespace RGR_TIMP_4_sem.Models
             {
                 throw new NullReferenceException("The Comands list is empty");
             }
-            else {
-                
+            else
+            {
+
                 int flag = 1;
                 int count_cycle = 0;
-                while (flag!=-1)
+                while (flag != -1)
                 {
                     int now = Number_of_SelectedStr(ComandLine);
-                    if (now==indexMove)
+                    if (now == indexMove)
                     {
                         return ($"The commands were successfully completed - {indexMove}");
                     }
-                    if(count_cycle==1000)
-                     {
-                         return "The endless loop";
-                     }
+                    if (count_cycle == 1000)
+                    {
+                        return "The endless loop";
+                    }
                     try
                     {
                         if (ComandLine[now].Command is Question)
                         {
-                            flag =ComandLine[now].Command.Work(Cells);
+                            flag = ComandLine[now].Command.Work(Cells);
                             int[] mass = Split(ComandLine[now].Str);
                             switchNumberLine(ComandLine, mass[flag]);
                             count_cycle++;
-                         }
+                        }
                         else
                         {
                             flag = ComandLine[now].Command.Work(Cells);
-                            switchNumberLine(ComandLine, now+1);
+                            switchNumberLine(ComandLine, now + 1);
                         }
                     }
-                    catch (NullReferenceException)
+                    catch (NullReferenceException ex)
                     {
-                        throw new NullReferenceException("The cell list is empty");
+                        throw new NullReferenceException(ex.Message);
                     }
-                } 
+                    catch (ArgumentOutOfRangeException ex)
+                    {
+                        throw new ArgumentOutOfRangeException(ex.Message);
+                    }
+
+                }
+                return " ";
             }
-            return " ";
         }
 
         public int[] Split(string str)
@@ -114,14 +120,21 @@ namespace RGR_TIMP_4_sem.Models
             }
             else
             {
-                foreach (var t in ComandLine)
+                if (index < 0 || index >= ComandLine.Count)
                 {
-                    if (t.Number == index)
+                    throw new ArgumentOutOfRangeException("Index is out of range");
+                }
+                else
+                {
+                    foreach (var t in ComandLine)
                     {
-                        t.IsSelected = true;
-                        break;
+                        if (t.Number == index)
+                        {
+                            t.IsSelected = true;
+                            break;
+                        }
+                        else { t.IsSelected = false; }
                     }
-                    else { t.IsSelected = false; }
                 }
             }
         }
