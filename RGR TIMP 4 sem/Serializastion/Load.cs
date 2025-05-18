@@ -10,9 +10,9 @@ namespace RGR_TIMP_4_sem.DanyaWork
     public class Load
     {
         //Deserialize From Directory
-        public List<ComandLine> LoadData(string directoryPath, string searchPattern)
+        public List<CommandLine> LoadData(string directoryPath, string searchPattern)
         {
-            List<ComandLine> items = new List<ComandLine>();
+            List<CommandLine> items = new List<CommandLine>();
             if (Directory.Exists(directoryPath))
             {
                 foreach (var filePath in Directory.GetFiles(directoryPath, searchPattern))
@@ -20,7 +20,7 @@ namespace RGR_TIMP_4_sem.DanyaWork
                     try
                     {
                         string fileContent = File.ReadAllText(filePath);
-                        List<ComandLine> deserializeItem = JsonSerializer.Deserialize<List<ComandLine>>(fileContent);
+                        List<CommandLine> deserializeItem = JsonSerializer.Deserialize<List<CommandLine>>(fileContent);
                         if (deserializeItem != null)
                         {
                             foreach (var item in deserializeItem)

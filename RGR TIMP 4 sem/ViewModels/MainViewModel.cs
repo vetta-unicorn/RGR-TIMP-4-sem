@@ -22,6 +22,14 @@ public class MainViewModel : ReactiveObject
     //индекс в глобальных координатах
     public int current_index { get; set; }
 
+    private ObservableCollection<ICommandLine> commandLines;
+
+    public ObservableCollection<ICommandLine> CommandLines
+    {
+        get => commandLines;
+        set => this.RaiseAndSetIfChanged(ref commandLines, value);
+    }
+
     public MainViewModel()
     {
         // команды для кнопок
@@ -34,18 +42,27 @@ public class MainViewModel : ReactiveObject
         Cells = new ObservableCollection<ICell>();
         ExtendedCells = new ObservableCollection<ICell>();
 
+        CommandLines = new ObservableCollection<ICommandLine>();
+        AddNewRow();
+
         CellInitialize(Cells, cell_num);
         CellInitialize(ExtendedCells, all_cell_num);
 
-        SetCell(3, 1);
-        SetCell(-1, 1);
-        SetCell(6, 1);
-        SetCell(2, 1);
-        SetCell(-5, 1);
-        SetCell(8, 1);
+        //SetCell(3, 1);
+        //SetCell(-1, 1);
+        //SetCell(6, 1);
+        //SetCell(2, 1);
+        //SetCell(-5, 1);
+        //SetCell(8, 1);
 
-        current_index = 0;
-        SelectCell(current_index);
+        //current_index = 0;
+        //SelectCell(current_index);
+    }
+
+    private void AddNewRow()
+    {
+        int rowNumber = CommandLines.Count; // Нумерация строк
+        CommandLines.Add(new CommandLine { Number = rowNumber });
     }
 
     private void OnButtonClickLeft()

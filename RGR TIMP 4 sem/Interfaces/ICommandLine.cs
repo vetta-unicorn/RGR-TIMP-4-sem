@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RGR_TIMP_4_sem.Interfaces
 {
-    public interface IComandLine
+    public interface ICommandLine
     {
 
         public bool IsSelected { get; set; }

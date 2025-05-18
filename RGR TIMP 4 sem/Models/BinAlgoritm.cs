@@ -22,13 +22,13 @@ namespace RGR_TIMP_4_sem.Models
         /// <returns>возвращает строку если выполнено, 
         /// 0 если кончились строки, 
         /// -1 если бесконечный цикл</returns>
-        public string Working (int indexMove, ObservableCollection<ICell> Cells, ObservableCollection<IComandLine> ComandLine)
+        public string Working (int indexMove, ObservableCollection<ICell> Cells, ObservableCollection<ICommandLine> CommandLine)
         {
             if(Cells==null)
             {
                 throw new NullReferenceException("The cell list is empty");
             }
-            else if (ComandLine == null)
+            else if (CommandLine == null)
             {
                 throw new NullReferenceException("The Comands list is empty");
             }
@@ -38,7 +38,7 @@ namespace RGR_TIMP_4_sem.Models
                 int count_cycle = 0;
                 while (flag!=-1)
                 {
-                    int now = Number_of_SelectedStr(ComandLine);
+                    int now = Number_of_SelectedStr(CommandLine);
                     if (now==indexMove)
                     {
                         return "The commands were successfully completed.";
@@ -49,17 +49,17 @@ namespace RGR_TIMP_4_sem.Models
                      }
                     try
                     {
-                        if (ComandLine[now].Command is Question)
+                        if (CommandLine[now].Command is Question)
                         {
-                            flag =ComandLine[now].Command.Work(Cells);
-                            int[] mass = Split(ComandLine[now].Str);
-                            switchNumberLine(ComandLine, mass[flag]);
+                            flag = CommandLine[now].Command.Work(Cells);
+                            int[] mass = Split(CommandLine[now].Str);
+                            switchNumberLine(CommandLine, mass[flag]);
                             count_cycle++;
                          }
                         else
                         {
-                            flag = ComandLine[now].Command.Work(Cells);
-                            switchNumberLine(ComandLine, now+1);
+                            flag = CommandLine[now].Command.Work(Cells);
+                            switchNumberLine(CommandLine, now+1);
                         }
                     }
                     catch (NullReferenceException)
@@ -84,16 +84,16 @@ namespace RGR_TIMP_4_sem.Models
 
 
         
-        public int Number_of_SelectedStr(ObservableCollection<IComandLine> ComandLine)
+        public int Number_of_SelectedStr(ObservableCollection<ICommandLine> CommandLine)
         {
-            if (ComandLine == null)
+            if (CommandLine == null)
             {
                 throw new NullReferenceException("The Comands list is empty");
             }
             else
             {
                 int index = 0;
-                foreach (var t in ComandLine)
+                foreach (var t in CommandLine)
                 {
                     if (t.IsSelected)
                     {
@@ -106,15 +106,15 @@ namespace RGR_TIMP_4_sem.Models
         }
 
         //пофиксить выход за пределы массива ObservableCollection<IComandLine> ? 1,7 когда всего 6 строк
-        public void switchNumberLine(ObservableCollection<IComandLine> ComandLine, int index)
+        public void switchNumberLine(ObservableCollection<ICommandLine> CommandLine, int index)
         {
-            if (ComandLine == null)
+            if (CommandLine == null)
             {
                 throw new NullReferenceException("The Comands list is empty");
             }
             else
             {
-                foreach (var t in ComandLine)
+                foreach (var t in CommandLine)
                 {
                     if (t.Number == index)
                     {

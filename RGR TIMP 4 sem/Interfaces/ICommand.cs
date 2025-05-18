@@ -13,7 +13,7 @@ namespace RGR_TIMP_4_sem.Interfaces
     [JsonDerivedType(typeof(LeftMove), typeDiscriminator:"LeftMove")]
     [JsonDerivedType(typeof(RightMove), typeDiscriminator: "RightMove")]
     [JsonDerivedType(typeof(One), typeDiscriminator: "One")]
-    [JsonDerivedType(typeof(Null), typeDiscriminator: "Null")]
+    [JsonDerivedType(typeof(Zero), typeDiscriminator: "Null")]
     [JsonDerivedType(typeof(Stop), typeDiscriminator: "Stop")]
     [JsonDerivedType(typeof(Question), typeDiscriminator: "Question")]
     public interface ICommand

@@ -102,7 +102,7 @@ namespace RGR_TIMP_4_sem.Models
 
     }
 
-    public class Null : ICommand //ноль в клетку
+    public class Zero : ICommand //ноль в клетку
     {
         private readonly string name = "0";
         public string NameCommand { get { return name; } }
