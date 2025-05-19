@@ -30,7 +30,7 @@ namespace RGR_TIMP_4_sem.Models
             }
             else if (CommandLine == null)
             {
-                throw new NullReferenceException("The Comands list is empty");
+                throw new NullReferenceException("The command list is empty");
             }
             else {
                 
