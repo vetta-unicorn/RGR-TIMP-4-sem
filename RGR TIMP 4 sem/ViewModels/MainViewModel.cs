@@ -31,7 +31,9 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref commandLines, value);
     }
 
-    public ReactiveCommand<Unit, Unit> AddRowCommand { get; }
+    public ReactiveCommand<Unit, Unit> AddRowCommand { get; } //команда добавления строки кода 
+    public ReactiveCommand<Unit, Unit> Build {  get; } // скомпилировать и собрать программу 
+    public ReactiveCommand<Unit, Unit> Start { get; } // запустить программу
 
     public List<ICommand> AvailableCommands => CommandList.Instance.Commands;
 

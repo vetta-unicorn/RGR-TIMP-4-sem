@@ -15,8 +15,10 @@
 		<local:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
 	</UserControl.Resources>
 
-	<StackPanel>
-		<ItemsControl ItemsSource="{Binding Cells}" Margin="50, 30, 50, 0" HorizontalAlignment="Center">
+	<StackPanel Background="LightBlue"
+				>
+		<!-- Индексы ячеек -->
+		<ItemsControl ItemsSource="{Binding Cells}" Background="White" Margin="50, 30, 50, 0" HorizontalAlignment="Center">
 			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
 					<StackPanel Orientation="Horizontal"/>
@@ -32,8 +34,8 @@
 			</ItemsControl.ItemTemplate>
 		</ItemsControl>
 
-		<!-- Новая полоска для индексов -->
-		<ItemsControl ItemsSource="{Binding Cells}" Margin="50, 0, 50, 0" HorizontalAlignment="Center">
+		<!-- Значения ячеек -->
+		<ItemsControl ItemsSource="{Binding Cells}" Background="White" Margin="50, 0, 50, 0" HorizontalAlignment="Center">
 			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
 					<StackPanel Orientation="Horizontal"/>
@@ -42,21 +44,23 @@
 			<ItemsControl.ItemTemplate>
 				<DataTemplate>
 					<Border BorderBrush="Black" BorderThickness="1" Margin="2" Height="50" Width="50">
-						<TextBlock Text="{Binding Value}" Padding="10"/>
+						<TextBox Text="{Binding Value, Mode=TwoWay}" Padding="10" />
 					</Border>
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
 		</ItemsControl>
 
+
+
 		<!-- Кнопки перемещения по ленте -->
-		<DockPanel Margin="5">
-			<Button Command="{Binding ButtonClickCommandLeft}" Content="Left" Width="50" Height="50" DockPanel.Dock="Left" HorizontalAlignment="Left"/>
-			<Button Command="{Binding ButtonClickCommandRight}" Content="Right" Width="50" Height="50" DockPanel.Dock="Right" HorizontalAlignment="Right"/>
+		<DockPanel Margin="5, 10, 5, 10">
+			<Button Background="White" Command="{Binding ButtonClickCommandLeft}" Content="Left" Width="50" Height="50" DockPanel.Dock="Left" HorizontalAlignment="Left"/>
+			<Button Background="White" Command="{Binding ButtonClickCommandRight}" Content="Right" Width="50" Height="50" DockPanel.Dock="Right" HorizontalAlignment="Right"/>
 		</DockPanel>
 
 		<!-- Кнопка добавления новой строки -->
-		<DockPanel Margin="5">
-			<Button Content="Add Row" Command="{Binding AddRowCommand}" />
+		<DockPanel Margin="10">
+			<Button Content="Add Row" Background="LightCoral" Command="{Binding AddRowCommand}" HorizontalAlignment="Center"/>
 		</DockPanel>
 
 
