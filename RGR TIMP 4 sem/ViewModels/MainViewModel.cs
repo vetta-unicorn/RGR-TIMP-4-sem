@@ -33,6 +33,7 @@ public class MainViewModel : ReactiveObject
     }
 
     public ReactiveCommand<Unit, Unit> AddRowCommand { get; } //команда добавления строки кода 
+    public ReactiveCommand<Unit, Unit> DeleteRowCommand { get; } //команда удаления строки кода
     public ReactiveCommand<Unit, Unit> Build {  get; } // скомпилировать и собрать программу 
     public ReactiveCommand<Unit, Unit> Start { get; } // запустить программу
 
@@ -61,18 +62,12 @@ public class MainViewModel : ReactiveObject
 
         CommandLines = new ObservableCollection<ICommandLine>();
         AddRowCommand = ReactiveCommand.Create(AddNewRow);
+        DeleteRowCommand = ReactiveCommand.Create(DeleteRow);
         AddNewRow();
 
         CellInitialize(Cells, cell_num);
         CellInitialize(ExtendedCells, all_cell_num);
         CommandLines[0].IsSelected = true;
-
-        //SetCell(3, 1);
-        //SetCell(-1, 1);
-        //SetCell(6, 1);
-        //SetCell(2, 1);
-        //SetCell(-5, 1);
-        //SetCell(8, 1);
 
         current_index = 0;
         SelectCell(current_index);
@@ -105,6 +100,12 @@ public class MainViewModel : ReactiveObject
     {
         int rowNumber = CommandLines.Count; // Нумерация строк
         CommandLines.Add(new CommandLine { Number = rowNumber });
+    }
+
+    public void DeleteRow()
+    {
+        int rowNumber = CommandLines.Count; // Нумерация строк
+        CommandLines.RemoveAt(rowNumber - 1);
     }
 
     private void OnButtonClickLeft()
@@ -165,26 +166,26 @@ public class MainViewModel : ReactiveObject
     }
 
 
-    public void SetCell(int index, int val)
-    {
-        int maxIndex = FindMaxIndex();
-        int minIndex = FindMinIndex();
-        for (int i = 0; i < all_cell_num; i++)
-        {
-            if (ExtendedCells[i].Index == index)
-            {
-                ExtendedCells[i].Value = val;
-            }
-        }
+    //public void SetCell(int index, int val)
+    //{
+    //    int maxIndex = FindMaxIndex();
+    //    int minIndex = FindMinIndex();
+    //    for (int i = 0; i < all_cell_num; i++)
+    //    {
+    //        if (ExtendedCells[i].Index == index)
+    //        {
+    //            ExtendedCells[i].Value = val;
+    //        }
+    //    }
 
-        for (int i = 0; i < cell_num; i++)
-        {
-            if (Cells[i].Index == index)
-            {
-                Cells[i].Value = val;
-            }
-        }
-    }
+    //    for (int i = 0; i < cell_num; i++)
+    //    {
+    //        if (Cells[i].Index == index)
+    //        {
+    //            Cells[i].Value = val;
+    //        }
+    //    }
+    //}
 
     public int FindMinIndex()
     {

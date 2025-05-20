@@ -49,6 +49,10 @@ namespace RGR_TIMP_4_sem.Models
                      }
                     try
                     {
+                        if (CommandLine[now].Command == null)
+                        {
+                            throw new Exception("Command is null");
+                        }
                         if (CommandLine[now].Command is Question)
                         {
                             flag = CommandLine[now].Command.Work(Cells);
@@ -62,9 +66,9 @@ namespace RGR_TIMP_4_sem.Models
                             switchNumberLine(CommandLine, now+1);
                         }
                     }
-                    catch (NullReferenceException)
+                    catch (Exception ex)
                     {
-                        throw new NullReferenceException("The cell list is empty");
+                        throw new Exception(ex.Message);
                     }
                 } 
             }
