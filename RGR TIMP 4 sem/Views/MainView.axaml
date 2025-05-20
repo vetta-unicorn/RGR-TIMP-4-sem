@@ -53,17 +53,26 @@
 
 
 		<!-- Кнопки перемещения по ленте -->
-		<DockPanel Margin="5, 10, 5, 10">
-			<Button Background="White" Command="{Binding ButtonClickCommandLeft}" Content="Left" Width="50" Height="50" DockPanel.Dock="Left" HorizontalAlignment="Left"/>
-			<Button Background="White" Command="{Binding ButtonClickCommandRight}" Content="Right" Width="50" Height="50" DockPanel.Dock="Right" HorizontalAlignment="Right"/>
+		<DockPanel Margin="15">
+			<Button Background="LightCoral" Command="{Binding ButtonClickCommandLeft}" Content="Left" Width="70" Height="30" DockPanel.Dock="Left" HorizontalAlignment="Left"/>
+			<Button Background="LightCoral" Command="{Binding ButtonClickCommandRight}" Content="Right" Width="70" Height="30" DockPanel.Dock="Right" HorizontalAlignment="Right"/>
 		</DockPanel>
 
-		<!-- Кнопка добавления новой строки -->
+		<!-- Кнопка добавления новой строки и сборки программы-->
 		<DockPanel Margin="10">
-			<Button Content="Add Row" Background="LightCoral" Command="{Binding AddRowCommand}" HorizontalAlignment="Center"/>
+			<Button Content="Add Row" Background="LightCoral" Command="{Binding AddRowCommand}" Margin="5"/> 
+			<Button Content="Build" Background="LightCoral" Command="{Binding Build}" Margin="5"/>
 		</DockPanel>
 
-
+		<StackPanel>
+			<Border BorderBrush="Gray" BorderThickness="1" Margin="10">
+				<StackPanel Background="White">
+					<TextBlock Text="Error list" FontWeight="Bold" Margin="5"/>
+					<TextBlock Text="{Binding ErrorBox}" Margin="5" TextWrapping="Wrap"/>
+				</StackPanel>
+			</Border>
+		</StackPanel>
+			
 		<!-- Table с CommandLines -->
 		<Border Background="Beige"
           BorderBrush="Black"
@@ -73,7 +82,7 @@
 						HorizontalAlignment="Center"
 						VerticalAlignment="Top">
 		<Grid>
-			<ItemsControl ItemsSource="{Binding CommandLines}"> 
+			<ItemsControl ItemsSource="{Binding CommandLines, Mode=TwoWay}"> 
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
 						<Grid>
@@ -89,19 +98,19 @@
 									   Background="{Binding IsSelected, Converter={StaticResource BoolToBrushConverter}}" />
 							<ComboBox Grid.Column="1"
 									  Width="150"
-                                      SelectedItem="{Binding Command}"
+                                      SelectedItem="{Binding Command, Mode=TwoWay}"
                                       ItemsSource="{Binding DataContext.AvailableCommands, RelativeSource={RelativeSource AncestorType=UserControl}}">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
-										<TextBlock Text="{Binding NameCommand}" />
+										<TextBlock Text="{Binding NameCommand, Mode=TwoWay}" />
 									</DataTemplate>
 								</ComboBox.ItemTemplate>
 							</ComboBox>
 							<TextBox Grid.Column="2"
-                                     Text="{Binding Str}"
+                                     Text="{Binding Str, Mode=TwoWay}"
                                      Watermark="*, *" />
 							<TextBox Grid.Column="3"
-                                     Text="{Binding Comments}"
+                                     Text="{Binding Comments, Mode=TwoWay}"
                                      Watermark="Comment" />
 						</Grid>
 					</DataTemplate>

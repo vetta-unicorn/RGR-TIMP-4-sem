@@ -73,6 +73,11 @@ namespace RGR_TIMP_4_sem.Models
 
         public int[] Split(string str)
         {
+            if (str == null || str == "" || !str.Contains(","))
+            {
+                throw new Exception("Incorrect input!");
+                return null;
+            }
             string[] parts = str.Split(',');
             int[] mass = new int [2];
             for(int i =0; i<2; i++)

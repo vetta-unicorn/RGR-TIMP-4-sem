@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using ReactiveUI;
@@ -37,11 +38,20 @@ public class MainViewModel : ReactiveObject
 
     public List<ICommand> AvailableCommands => CommandList.Instance.Commands;
 
+    // для вывода ошибок
+    private string _ErrorBox;
+    public string ErrorBox
+    {
+        get => _ErrorBox;
+        set => this.RaiseAndSetIfChanged(ref _ErrorBox, value);
+    }
+
     public MainViewModel()
     {
         // команды для кнопок
         ButtonClickCommandLeft = ReactiveCommand.Create(OnButtonClickLeft);
         ButtonClickCommandRight = ReactiveCommand.Create(OnButtonClickRight);
+        Build = ReactiveCommand.Create(BuildProgram);
 
         cell_num = 19;
         all_cell_num = 201;
@@ -67,6 +77,29 @@ public class MainViewModel : ReactiveObject
         current_index = 0;
         SelectCell(current_index);
     }
+
+    public void BuildProgram()
+    {
+        BinAlgoritm binAlgoritm = new BinAlgoritm();
+        bool Flag = false;
+        try
+        {
+            binAlgoritm.Working(-1, ExtendedCells, CommandLines);
+        }
+        catch (Exception ex)
+        {
+            ErrorBox = ex.Message;
+            Flag = true;
+        }
+        finally
+        {
+            if (!Flag)
+            {
+                ErrorBox = "";
+            }
+        }
+    }
+
 
     public void AddNewRow()
     {
