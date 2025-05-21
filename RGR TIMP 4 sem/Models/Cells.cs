@@ -13,6 +13,7 @@ namespace RGR_TIMP_4_sem.Models
         private int _value;
         private int _index;
         private bool _isSelected;
+        private bool _isVisible;
         public int Value
         {
             get => _value;
@@ -29,6 +30,12 @@ namespace RGR_TIMP_4_sem.Models
         {
             get => _isSelected;
             set => this.RaiseAndSetIfChanged(ref _isSelected, value);
+        }
+
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set => this.RaiseAndSetIfChanged(ref _isVisible, value);
         }
     }
 }

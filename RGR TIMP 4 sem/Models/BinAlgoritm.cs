@@ -17,7 +17,7 @@ namespace RGR_TIMP_4_sem.Models
         /// Бинарный алгоритм
         /// </summary>
         /// <param name="indexMove"> до какой строки делать за 1 нажатие, если -1 то делать весь алгоритм</param>
-        /// <param name="WorkingCell"> ObservableCollection клеток (видимых) </param>
+        /// <param name="Cells"> ObservableCollection клеток (всех) </param>
         /// <param name="Table"> ObservableCollection строк алгоритма</param>
         /// <returns>возвращает строку если выполнено, 
         /// 0 если кончились строки, 
@@ -63,6 +63,7 @@ namespace RGR_TIMP_4_sem.Models
                         else
                         {
                             flag = CommandLine[now].Command.Work(Cells);
+                            if (now == CommandLine.Count() - 1) return " ";
                             switchNumberLine(CommandLine, now+1);
                         }
                     }
@@ -80,7 +81,6 @@ namespace RGR_TIMP_4_sem.Models
             if (str == null || str == "" || !str.Contains(","))
             {
                 throw new Exception("Incorrect input!");
-                return null;
             }
             string[] parts = str.Split(',');
             int[] mass = new int [2];
@@ -97,7 +97,7 @@ namespace RGR_TIMP_4_sem.Models
         {
             if (CommandLine == null)
             {
-                throw new NullReferenceException("The Comands list is empty");
+                throw new NullReferenceException("The command list is empty");
             }
             else
             {

@@ -62,7 +62,7 @@
 		<DockPanel Margin="10">
 			<Button Content="Add Row" Background="LightCoral" Command="{Binding AddRowCommand}" Margin="5"/>
 			<Button Content="Delete Row" Background="LightCoral" Command="{Binding DeleteRowCommand}" Margin="5"/>
-			<Button Content="Build" Background="LightCoral" Command="{Binding Build}" Margin="5"/>
+			<Button Content="Start" Background="LightCoral" Command="{Binding Start}" Margin="5"/>
 		</DockPanel>
 
 		<StackPanel>

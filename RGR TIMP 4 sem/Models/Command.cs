@@ -16,7 +16,7 @@ namespace RGR_TIMP_4_sem.Models
     public class LeftMove: ICommand
     {
 
-        private readonly string name = "->";
+        private readonly string name = "<-";
         public string NameCommand { get { return name; } }
         public LeftMove() { }
         public int Work(ObservableCollection<ICell> Cells)
@@ -46,7 +46,7 @@ namespace RGR_TIMP_4_sem.Models
 
     public class RightMove : ICommand
     {
-        private readonly string name = "<-";
+        private readonly string name = "->";
         public string NameCommand { get { return name; } }
         public int Work(ObservableCollection<ICell> Cells)
         {

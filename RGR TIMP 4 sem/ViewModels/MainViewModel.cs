@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using ReactiveUI;
 using RGR_TIMP_4_sem.Interfaces;
@@ -34,7 +35,6 @@ public class MainViewModel : ReactiveObject
 
     public ReactiveCommand<Unit, Unit> AddRowCommand { get; } //команда добавления строки кода 
     public ReactiveCommand<Unit, Unit> DeleteRowCommand { get; } //команда удаления строки кода
-    public ReactiveCommand<Unit, Unit> Build {  get; } // скомпилировать и собрать программу 
     public ReactiveCommand<Unit, Unit> Start { get; } // запустить программу
 
     public List<ICommand> AvailableCommands => CommandList.Instance.Commands;
@@ -52,7 +52,7 @@ public class MainViewModel : ReactiveObject
         // команды для кнопок
         ButtonClickCommandLeft = ReactiveCommand.Create(OnButtonClickLeft);
         ButtonClickCommandRight = ReactiveCommand.Create(OnButtonClickRight);
-        Build = ReactiveCommand.Create(BuildProgram);
+        Start = ReactiveCommand.Create(StartProgram);
 
         cell_num = 19;
         all_cell_num = 201;
@@ -65,15 +65,15 @@ public class MainViewModel : ReactiveObject
         DeleteRowCommand = ReactiveCommand.Create(DeleteRow);
         AddNewRow();
 
-        CellInitialize(Cells, cell_num);
-        CellInitialize(ExtendedCells, all_cell_num);
+        InitializeIndices(Cells, cell_num);
+        InitializeIndices(ExtendedCells, all_cell_num);
         CommandLines[0].IsSelected = true;
 
         current_index = 0;
         SelectCell(current_index);
     }
 
-    public void BuildProgram()
+    public void StartProgram()
     {
         BinAlgoritm binAlgoritm = new BinAlgoritm();
         bool Flag = false;
@@ -92,6 +92,8 @@ public class MainViewModel : ReactiveObject
             {
                 ErrorBox = "";
             }
+
+            UpdateVisibleItemsValues(Cells, ExtendedCells);
         }
     }
 
@@ -107,6 +109,7 @@ public class MainViewModel : ReactiveObject
         int rowNumber = CommandLines.Count; // Нумерация строк
         CommandLines.RemoveAt(rowNumber - 1);
     }
+
 
     private void OnButtonClickLeft()
     {
@@ -144,23 +147,32 @@ public class MainViewModel : ReactiveObject
         SelectCell(current_index);
     }
 
-    public void CellInitialize(ObservableCollection<ICell> _Cells, int _cell_num)
+    public static void InitializeIndices(ObservableCollection<ICell> cells, int number)
     {
-        for (int i = 0; i < _cell_num; i++)
+        // Определяем смещение для индексов
+        int offset = number / 2;
+
+        for (int i = 0; i < number; i++)
         {
-            ICell a = new CellModel();
-            _Cells.Add(a);
-            if (i == cell_num / 2)
+            cells.Add(new CellModel());
+            cells[i].Index = i - offset; // Устанавливаем индекс
+        }
+    }
+
+    public void UpdateVisibleItemsValues(ObservableCollection<ICell> visibleItems, ObservableCollection<ICell> extendedItems)
+    {
+        // Создаем словарь для быстрого доступа к элементам extendedItems по их индексам
+        Dictionary<int, ICell> extendedItemsDict = extendedItems.ToDictionary(item => item.Index);
+
+        // Проходим по элементам visibleItems
+        foreach (var visibleItem in visibleItems)
+        {
+            // Проверяем, есть ли соответствующий элемент в extendedItems
+            if (extendedItemsDict.TryGetValue(visibleItem.Index, out var extendedItem))
             {
-                _Cells[i].Index = 0;
-            }
-            else if (i < cell_num / 2)
-            {
-                _Cells[i].Index = -_cell_num / 2 + i;
-            }
-            else
-            {
-                _Cells[i].Index = i - _cell_num / 2;
+                // Обновляем значение Value у visibleItem
+                visibleItem.Value = extendedItem.Value;
+                visibleItem.IsSelected = extendedItem.IsSelected;
             }
         }
     }
@@ -187,31 +199,31 @@ public class MainViewModel : ReactiveObject
     //    }
     //}
 
-    public int FindMinIndex()
-    {
-        int minVal = int.MaxValue;
-        foreach (var _cell in Cells)
-        {
-            if (_cell.Index < minVal)
-            {
-                minVal = _cell.Index;
-            }
-        }
-        return minVal;
-    }
+    //public int FindMinIndex()
+    //{
+    //    int minVal = int.MaxValue;
+    //    foreach (var _cell in Cells)
+    //    {
+    //        if (_cell.Index < minVal)
+    //        {
+    //            minVal = _cell.Index;
+    //        }
+    //    }
+    //    return minVal;
+    //}
 
-    public int FindMaxIndex()
-    {
-        int maxVal = int.MinValue;
-        foreach (var _cell in Cells)
-        {
-            if (_cell.Index > maxVal)
-            {
-                maxVal = _cell.Index;
-            }
-        }
-        return maxVal;
-    }
+    //public int FindMaxIndex()
+    //{
+    //    int maxVal = int.MinValue;
+    //    foreach (var _cell in Cells)
+    //    {
+    //        if (_cell.Index > maxVal)
+    //        {
+    //            maxVal = _cell.Index;
+    //        }
+    //    }
+    //    return maxVal;
+    //}
 
     public void SelectCell(int index)
     {
