@@ -11,5 +11,6 @@ namespace RGR_TIMP_4_sem.Interfaces
         public bool IsSelected { get; set; }
         public int Index { get; set; }
         public int Value { get; set; }
+        public bool IsVisible { get; set; }
     }
 }

@@ -4,8 +4,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using ReactiveUI;
+using ReactiveUI.Fody;
 using RGR_TIMP_4_sem.Interfaces;
 using RGR_TIMP_4_sem.Models;
+using System.ComponentModel;
+
 
 namespace RGR_TIMP_4_sem.ViewModels;
 
@@ -14,13 +17,17 @@ public class MainViewModel : ReactiveObject
     public ReactiveCommand<Unit, Unit> ButtonClickCommandLeft { get; }
     public ReactiveCommand<Unit, Unit> ButtonClickCommandRight { get; }
 
-    // здесь будут храниться ячейки, которые показываются на экране
-    public ObservableCollection<ICell> Cells { get; }
+    private ObservableCollection<ICell> _cells;
+    public ObservableCollection<ICell> Cells
+    {
+        get => _cells;
+        set => this.RaiseAndSetIfChanged(ref _cells, value);
+    }
 
-    // здесь будут показываться ВСЕ ячейки
-    public ObservableCollection<ICell> ExtendedCells { get; }
-    public int cell_num { get; set; }
-    public int all_cell_num { get; set; }
+    public ObservableCollection<ICell> VisibleCells { get; private set; }
+
+    public int visibleCellNum { get; set; }
+    public int allCellNum { get; set; }
 
     //индекс в глобальных координатах
     public int current_index { get; set; }
@@ -47,6 +54,7 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _ErrorBox, value);
     }
 
+
     public MainViewModel()
     {
         // команды для кнопок
@@ -54,23 +62,58 @@ public class MainViewModel : ReactiveObject
         ButtonClickCommandRight = ReactiveCommand.Create(OnButtonClickRight);
         Start = ReactiveCommand.Create(StartProgram);
 
-        cell_num = 19;
-        all_cell_num = 201;
+        visibleCellNum = 19;
+        allCellNum = 201;
 
         Cells = new ObservableCollection<ICell>();
-        ExtendedCells = new ObservableCollection<ICell>();
+        VisibleCells = new ObservableCollection<ICell>();
+
+        foreach (var cell in Cells)
+        {
+            SubscribeToVisibility(cell);
+        }
+
+        // Подписываемся на добавление новых ячеек
+        Cells.CollectionChanged += (s, e) =>
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ICell newCell in e.NewItems)
+                {
+                    SubscribeToVisibility(newCell);
+                }
+            }
+        };
+
+        Cells[100].IsVisible = true;
 
         CommandLines = new ObservableCollection<ICommandLine>();
         AddRowCommand = ReactiveCommand.Create(AddNewRow);
         DeleteRowCommand = ReactiveCommand.Create(DeleteRow);
         AddNewRow();
 
-        InitializeIndices(Cells, cell_num);
-        InitializeIndices(ExtendedCells, all_cell_num);
+        InitializeIndices(Cells, allCellNum);
         CommandLines[0].IsSelected = true;
 
         current_index = 0;
         SelectCell(current_index);
+    }
+
+    // подписываемся на событие по изменению видимости
+    private void SubscribeToVisibility(ICell cell)
+    {
+        cell.WhenAnyValue(x => x.IsVisible)
+            .Subscribe(isVisible =>
+            {
+                if (isVisible && !VisibleCells.Contains(cell))
+                {
+                    VisibleCells.Add(cell);
+                }
+                else if (!isVisible && VisibleCells.Contains(cell))
+                {
+                    VisibleCells.Remove(cell);
+                }
+            });
     }
 
     public void StartProgram()
@@ -79,7 +122,7 @@ public class MainViewModel : ReactiveObject
         bool Flag = false;
         try
         {
-            binAlgoritm.Working(-1, ExtendedCells, CommandLines);
+            binAlgoritm.Working(-1, Cells, CommandLines);
         }
         catch (Exception ex)
         {
@@ -92,8 +135,6 @@ public class MainViewModel : ReactiveObject
             {
                 ErrorBox = "";
             }
-
-            UpdateVisibleItemsValues(Cells, ExtendedCells);
         }
     }
 
@@ -113,37 +154,37 @@ public class MainViewModel : ReactiveObject
 
     private void OnButtonClickLeft()
     {
-        for (int i = 0; i < cell_num; i++)
-        {
-            Cells[i].Index--;
+        //for (int i = 0; i < cell_num; i++)
+        //{
+        //    Cells[i].Index--;
 
-            foreach (var _cell in ExtendedCells)
-            {
-                if (_cell.Index == Cells[i].Index)
-                {
-                    Cells[i].Value = _cell.Value;
-                    break;
-                }
-            }
-        }
+        //    foreach (var _cell in ExtendedCells)
+        //    {
+        //        if (_cell.Index == Cells[i].Index)
+        //        {
+        //            Cells[i].Value = _cell.Value;
+        //            break;
+        //        }
+        //    }
+        //}
         SelectCell(current_index);
     }
 
     private void OnButtonClickRight()
     {
-        for (int i = 0; i < cell_num; i++)
-        {
-            Cells[i].Index++;
+        //for (int i = 0; i < cell_num; i++)
+        //{
+        //    Cells[i].Index++;
 
-            foreach (var _cell in ExtendedCells)
-            {
-                if (_cell.Index == Cells[i].Index)
-                {
-                    Cells[i].Value = _cell.Value;
-                    break;
-                }
-            }
-        }
+        //    foreach (var _cell in ExtendedCells)
+        //    {
+        //        if (_cell.Index == Cells[i].Index)
+        //        {
+        //            Cells[i].Value = _cell.Value;
+        //            break;
+        //        }
+        //    }
+        //}
         SelectCell(current_index);
     }
 
@@ -159,79 +200,8 @@ public class MainViewModel : ReactiveObject
         }
     }
 
-    public void UpdateVisibleItemsValues(ObservableCollection<ICell> visibleItems, ObservableCollection<ICell> extendedItems)
-    {
-        // Создаем словарь для быстрого доступа к элементам extendedItems по их индексам
-        Dictionary<int, ICell> extendedItemsDict = extendedItems.ToDictionary(item => item.Index);
-
-        // Проходим по элементам visibleItems
-        foreach (var visibleItem in visibleItems)
-        {
-            // Проверяем, есть ли соответствующий элемент в extendedItems
-            if (extendedItemsDict.TryGetValue(visibleItem.Index, out var extendedItem))
-            {
-                // Обновляем значение Value у visibleItem
-                visibleItem.Value = extendedItem.Value;
-                visibleItem.IsSelected = extendedItem.IsSelected;
-            }
-        }
-    }
-
-
-    //public void SetCell(int index, int val)
-    //{
-    //    int maxIndex = FindMaxIndex();
-    //    int minIndex = FindMinIndex();
-    //    for (int i = 0; i < all_cell_num; i++)
-    //    {
-    //        if (ExtendedCells[i].Index == index)
-    //        {
-    //            ExtendedCells[i].Value = val;
-    //        }
-    //    }
-
-    //    for (int i = 0; i < cell_num; i++)
-    //    {
-    //        if (Cells[i].Index == index)
-    //        {
-    //            Cells[i].Value = val;
-    //        }
-    //    }
-    //}
-
-    //public int FindMinIndex()
-    //{
-    //    int minVal = int.MaxValue;
-    //    foreach (var _cell in Cells)
-    //    {
-    //        if (_cell.Index < minVal)
-    //        {
-    //            minVal = _cell.Index;
-    //        }
-    //    }
-    //    return minVal;
-    //}
-
-    //public int FindMaxIndex()
-    //{
-    //    int maxVal = int.MinValue;
-    //    foreach (var _cell in Cells)
-    //    {
-    //        if (_cell.Index > maxVal)
-    //        {
-    //            maxVal = _cell.Index;
-    //        }
-    //    }
-    //    return maxVal;
-    //}
-
     public void SelectCell(int index)
     {
-        foreach (var e_cell in ExtendedCells)
-        {
-            e_cell.IsSelected = (e_cell.Index == index);
-        }
-
         foreach (var cell in Cells)
         {
             cell.IsSelected = (cell.Index == index);
