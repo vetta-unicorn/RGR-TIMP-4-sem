@@ -18,7 +18,7 @@
 	<StackPanel Background="LightBlue"
 				>
 		<!-- Индексы ячеек -->
-		<ItemsControl ItemsSource="{Binding Cells}" Background="White" Margin="50, 30, 50, 0" HorizontalAlignment="Center">
+		<ItemsControl ItemsSource="{Binding VisibleCells}" Background="White" Margin="50, 30, 50, 0" HorizontalAlignment="Center">
 			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
 					<StackPanel Orientation="Horizontal"/>
@@ -35,7 +35,7 @@
 		</ItemsControl>
 
 		<!-- Значения ячеек -->
-		<ItemsControl ItemsSource="{Binding Cells}" Background="White" Margin="50, 0, 50, 0" HorizontalAlignment="Center">
+		<ItemsControl ItemsSource="{Binding VisibleCells}" Background="White" Margin="50, 0, 50, 0" HorizontalAlignment="Center">
 			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
 					<StackPanel Orientation="Horizontal"/>
@@ -63,13 +63,14 @@
 			<Button Content="Add Row" Background="LightCoral" Command="{Binding AddRowCommand}" Margin="5"/>
 			<Button Content="Delete Row" Background="LightCoral" Command="{Binding DeleteRowCommand}" Margin="5"/>
 			<Button Content="Start" Background="LightCoral" Command="{Binding Start}" Margin="5"/>
+			<Button Content="Go line by line" Background="LightCoral" Command="{Binding LineByLine}" Margin="5"/>
 		</DockPanel>
 
 		<StackPanel>
 			<Border BorderBrush="Gray" BorderThickness="1" Margin="10">
 				<StackPanel Background="White">
-					<TextBlock Text="Error list" FontWeight="Bold" Margin="5"/>
-					<TextBlock Text="{Binding ErrorBox}" Margin="5" TextWrapping="Wrap"/>
+					<TextBlock Text="Console" FontWeight="Bold" Margin="5"/>
+					<TextBlock Text="{Binding ConsoleBox}" Margin="5" TextWrapping="Wrap"/>
 				</StackPanel>
 			</Border>
 		</StackPanel>

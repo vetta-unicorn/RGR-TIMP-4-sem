@@ -44,14 +44,16 @@ namespace RGR_TIMP_4_sem.Models
                         return "The commands were successfully completed.";
                     }
                     if(count_cycle==1000)
-                     {
-                         return "The endless loop";
-                     }
+                    {
+                        CommandLine[now].IsSelected = false;
+                        CommandLine[0].IsSelected = true;
+                        return "The endless loop";
+                    }
                     try
                     {
                         if (CommandLine[now].Command == null)
                         {
-                            throw new Exception("Command is null");
+                            throw new Exception("The command is null");
                         }
                         if (CommandLine[now].Command is Question)
                         {
@@ -59,11 +61,14 @@ namespace RGR_TIMP_4_sem.Models
                             int[] mass = Split(CommandLine[now].Str);
                             switchNumberLine(CommandLine, mass[flag]);
                             count_cycle++;
-                         }
+                        }
                         else
                         {
                             flag = CommandLine[now].Command.Work(Cells);
-                            if (now == CommandLine.Count() - 1) return " ";
+                            if (now == CommandLine.Count() - 1)
+                            {
+                                switchNumberLine(CommandLine, 0);
+                            }
                             switchNumberLine(CommandLine, now+1);
                         }
                     }
@@ -119,18 +124,20 @@ namespace RGR_TIMP_4_sem.Models
         {
             if (CommandLine == null)
             {
-                throw new NullReferenceException("The Comands list is empty");
+                throw new NullReferenceException("The Command list is empty");
             }
             else
             {
-                foreach (var t in CommandLine)
+                for (int i = 0; i < CommandLine.Count(); i++)
                 {
-                    if (t.Number == index)
+                    if (CommandLine[i].Number != index)
                     {
-                        t.IsSelected = true;
-                        break;
+                        CommandLine[i].IsSelected = false;
                     }
-                    else { t.IsSelected = false; }
+                    else if (CommandLine[i].Number == index)
+                    {
+                        CommandLine[i].IsSelected = true;
+                    }
                 }
             }
         }

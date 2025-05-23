@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,25 @@ namespace RGR_TIMP_4_sem.ViewModels
                 new Stop(),
                 new Question()
             };
+        }
+    }
+
+    public class CommandFunc
+    {
+        ObservableCollection<ICommandLine> lines;
+
+        public CommandFunc(ObservableCollection<ICommandLine> lines)
+        {
+            this.lines = lines;
+        }
+
+        public int FindSelectedLine()
+        {
+            for(int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].IsSelected) return i;
+            }
+            return -1;
         }
     }
 

@@ -31,7 +31,6 @@ namespace RGR_TIMP_4_sem.DanyaWork
             {
                 throw new Exception($"Не удалось создать файл: {fileName} \n Ошибка: {ex}");
             }
-            return false;
         }
         private string GenerateUniqueName(string directoryPath, string baseName, string extension)
         {

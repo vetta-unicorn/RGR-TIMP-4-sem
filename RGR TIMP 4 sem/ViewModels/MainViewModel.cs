@@ -14,9 +14,19 @@ namespace RGR_TIMP_4_sem.ViewModels;
 
 public class MainViewModel : ReactiveObject
 {
+    // вспомогательные классы
+    CellViewModel cellViewModel;
+    CommandFunc commandFunc;
+
+    // команды для кнопок
     public ReactiveCommand<Unit, Unit> ButtonClickCommandLeft { get; }
     public ReactiveCommand<Unit, Unit> ButtonClickCommandRight { get; }
+    public ReactiveCommand<Unit, Unit> AddRowCommand { get; } //команда добавления строки кода 
+    public ReactiveCommand<Unit, Unit> DeleteRowCommand { get; } //команда удаления строки кода
+    public ReactiveCommand<Unit, Unit> Start { get; } // запустить программу
+    public ReactiveCommand<Unit, Unit> LineByLine { get; } // идти по строкам
 
+    // ячейки
     private ObservableCollection<ICell> _cells;
     public ObservableCollection<ICell> Cells
     {
@@ -26,12 +36,11 @@ public class MainViewModel : ReactiveObject
 
     public ObservableCollection<ICell> VisibleCells { get; private set; }
 
-    public int visibleCellNum { get; set; }
-    public int allCellNum { get; set; }
+    // количество ячеек
+    public int allCellNum;
 
-    //индекс в глобальных координатах
-    public int current_index { get; set; }
 
+    // строки программы
     private ObservableCollection<ICommandLine> commandLines;
 
     public ObservableCollection<ICommandLine> CommandLines
@@ -40,20 +49,24 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref commandLines, value);
     }
 
-    public ReactiveCommand<Unit, Unit> AddRowCommand { get; } //команда добавления строки кода 
-    public ReactiveCommand<Unit, Unit> DeleteRowCommand { get; } //команда удаления строки кода
-    public ReactiveCommand<Unit, Unit> Start { get; } // запустить программу
-
     public List<ICommand> AvailableCommands => CommandList.Instance.Commands;
 
+
     // для вывода ошибок
-    private string _ErrorBox;
-    public string ErrorBox
+    private string _ConsoleBox;
+    public string ConsoleBox
     {
-        get => _ErrorBox;
-        set => this.RaiseAndSetIfChanged(ref _ErrorBox, value);
+        get => _ConsoleBox;
+        set => this.RaiseAndSetIfChanged(ref _ConsoleBox, value);
     }
 
+    // последняя выполняемая строка
+    private int _LastMadeLine;
+    public int LastMadeLine
+    {
+        get => _LastMadeLine;
+        set => this.RaiseAndSetIfChanged(ref _LastMadeLine, value);
+    }
 
     public MainViewModel()
     {
@@ -62,11 +75,13 @@ public class MainViewModel : ReactiveObject
         ButtonClickCommandRight = ReactiveCommand.Create(OnButtonClickRight);
         Start = ReactiveCommand.Create(StartProgram);
 
-        visibleCellNum = 19;
         allCellNum = 201;
+        int leftDefaultBorder = 91;
+        int rightDefaultBorder = 109;
 
         Cells = new ObservableCollection<ICell>();
         VisibleCells = new ObservableCollection<ICell>();
+        CellViewModel.InitializeCells(Cells, allCellNum);
 
         foreach (var cell in Cells)
         {
@@ -85,18 +100,31 @@ public class MainViewModel : ReactiveObject
             }
         };
 
-        Cells[100].IsVisible = true;
+        // отображаем только 19 клеток от -9 до 9
+        for (int i = leftDefaultBorder; i < rightDefaultBorder + 1; i++)
+        {
+            Cells[i].IsVisible = true;
+        }
 
+        // ставим каретку по умолчанию на 0 ячейку
+        Cells[100].IsSelected = true;
+
+        // вспомогательные классы
+        cellViewModel = new CellViewModel(Cells);
+
+        // линии программы
         CommandLines = new ObservableCollection<ICommandLine>();
         AddRowCommand = ReactiveCommand.Create(AddNewRow);
         DeleteRowCommand = ReactiveCommand.Create(DeleteRow);
+        LineByLine = ReactiveCommand.Create(StartLineByLine);
         AddNewRow();
 
-        InitializeIndices(Cells, allCellNum);
+        // изначально выбираем первую строку программы
         CommandLines[0].IsSelected = true;
+        commandFunc = new CommandFunc(CommandLines);
 
-        current_index = 0;
-        SelectCell(current_index);
+        // задаем начальное значение
+        LastMadeLine = -1;
     }
 
     // подписываемся на событие по изменению видимости
@@ -105,11 +133,12 @@ public class MainViewModel : ReactiveObject
         cell.WhenAnyValue(x => x.IsVisible)
             .Subscribe(isVisible =>
             {
-                if (isVisible && !VisibleCells.Contains(cell))
+                if (VisibleCells != null && isVisible && !VisibleCells.Contains(cell))
                 {
-                    VisibleCells.Add(cell);
+                    if (VisibleCells.Count() != 0 && VisibleCells.First().Index > cell.Index) VisibleCells.Insert(0, cell);
+                    else VisibleCells.Add(cell);
                 }
-                else if (!isVisible && VisibleCells.Contains(cell))
+                else if (VisibleCells != null && !isVisible && VisibleCells.Contains(cell))
                 {
                     VisibleCells.Remove(cell);
                 }
@@ -123,17 +152,49 @@ public class MainViewModel : ReactiveObject
         try
         {
             binAlgoritm.Working(-1, Cells, CommandLines);
+            if (commandFunc.FindSelectedLine() == -1)
+            {
+                throw new Exception("Can't find the selected line");
+            }
         }
         catch (Exception ex)
         {
-            ErrorBox = ex.Message;
+            ConsoleBox = ex.Message;
             Flag = true;
         }
         finally
         {
             if (!Flag)
             {
-                ErrorBox = "";
+                ConsoleBox = "The program was successfully completed!";
+            }
+            CommandLines[commandFunc.FindSelectedLine()].IsSelected = false;
+            CommandLines[0].IsSelected = true;
+        }
+    }
+
+    public void StartLineByLine()
+    {
+        BinAlgoritm binAlgoritm = new BinAlgoritm();
+        bool Flag = false;
+        try
+        {
+            binAlgoritm.Working(commandFunc.FindSelectedLine() + 1, Cells, CommandLines);
+            if (commandFunc.FindSelectedLine() == -1)
+            {
+                throw new Exception("Can't find the selected line");
+            }
+        }
+        catch (Exception ex)
+        {
+            ConsoleBox = ex.Message;
+            Flag = true;
+        }
+        finally
+        {
+            if (!Flag)
+            {
+                ConsoleBox = "The line was successfully completed!";
             }
         }
     }
@@ -147,64 +208,22 @@ public class MainViewModel : ReactiveObject
 
     public void DeleteRow()
     {
-        int rowNumber = CommandLines.Count; // Нумерация строк
-        CommandLines.RemoveAt(rowNumber - 1);
+        if (CommandLines.Count > 0)
+        {
+            int rowNumber = CommandLines.Count; 
+            CommandLines.RemoveAt(rowNumber - 1);
+        }
     }
-
 
     private void OnButtonClickLeft()
     {
-        //for (int i = 0; i < cell_num; i++)
-        //{
-        //    Cells[i].Index--;
-
-        //    foreach (var _cell in ExtendedCells)
-        //    {
-        //        if (_cell.Index == Cells[i].Index)
-        //        {
-        //            Cells[i].Value = _cell.Value;
-        //            break;
-        //        }
-        //    }
-        //}
-        SelectCell(current_index);
+        Cells[cellViewModel.FindLeftVisible() - 1].IsVisible = true;
+        Cells[cellViewModel.FindRightVisible()].IsVisible = false;
     }
 
     private void OnButtonClickRight()
     {
-        //for (int i = 0; i < cell_num; i++)
-        //{
-        //    Cells[i].Index++;
-
-        //    foreach (var _cell in ExtendedCells)
-        //    {
-        //        if (_cell.Index == Cells[i].Index)
-        //        {
-        //            Cells[i].Value = _cell.Value;
-        //            break;
-        //        }
-        //    }
-        //}
-        SelectCell(current_index);
-    }
-
-    public static void InitializeIndices(ObservableCollection<ICell> cells, int number)
-    {
-        // Определяем смещение для индексов
-        int offset = number / 2;
-
-        for (int i = 0; i < number; i++)
-        {
-            cells.Add(new CellModel());
-            cells[i].Index = i - offset; // Устанавливаем индекс
-        }
-    }
-
-    public void SelectCell(int index)
-    {
-        foreach (var cell in Cells)
-        {
-            cell.IsSelected = (cell.Index == index);
-        }
+        Cells[cellViewModel.FindLeftVisible()].IsVisible = false;
+        Cells[cellViewModel.FindRightVisible() + 1].IsVisible = true;
     }
 }
