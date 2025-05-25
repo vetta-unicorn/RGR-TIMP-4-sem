@@ -110,7 +110,7 @@
 							</ComboBox>
 							<TextBox Grid.Column="2"
                                      Text="{Binding Str, Mode=TwoWay}"
-                                     Watermark="*, *" />
+                                     Watermark="J or J1, J2" />
 							<TextBox Grid.Column="3"
                                      Text="{Binding Comments, Mode=TwoWay}"
                                      Watermark="Comment" />

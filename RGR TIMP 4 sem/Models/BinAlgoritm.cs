@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RGR_TIMP_4_sem.Models
@@ -22,15 +23,15 @@ namespace RGR_TIMP_4_sem.Models
         /// <returns>возвращает строку если выполнено, 
         /// 0 если кончились строки, 
         /// -1 если бесконечный цикл</returns>
-        public string Working (int indexMove, ObservableCollection<ICell> Cells, ObservableCollection<ICommandLine> CommandLine)
+        public string Working (int indexMove, ObservableCollection<ICell> Cells, ObservableCollection<ICommandLine> CommandLine, CancellationToken token)
         {
             if(Cells==null)
             {
-                throw new NullReferenceException("The cell list is empty");
+                return "The cell list is empty";
             }
             else if (CommandLine == null)
             {
-                throw new NullReferenceException("The command list is empty");
+                return "The command list is empty";
             }
             else {
                 
@@ -38,6 +39,7 @@ namespace RGR_TIMP_4_sem.Models
                 int count_cycle = 0;
                 while (flag!=-1)
                 {
+                    token.ThrowIfCancellationRequested();
                     int now = Number_of_SelectedStr(CommandLine);
                     if (now==indexMove)
                     {
@@ -65,20 +67,76 @@ namespace RGR_TIMP_4_sem.Models
                         else
                         {
                             flag = CommandLine[now].Command.Work(Cells);
-                            if (now == CommandLine.Count() - 1)
+                            if (CommandLine[now].Command is Stop)
                             {
-                                switchNumberLine(CommandLine, 0);
+                                CommandLine[now].IsSelected = false;
+                                CommandLine[0].IsSelected = true;
+                                flag = -1;
                             }
-                            switchNumberLine(CommandLine, now+1);
+                            else
+                            {
+                                switchNumberLine(CommandLine, Convert.ToInt32(CommandLine[now].Str));
+                            }
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception(ex.Message);
+                        return ex.Message;
                     }
                 } 
             }
-            return " ";
+            return "The commands were successfully completed!";
+        }
+
+        public string OneCommandWorking(ObservableCollection<ICell> Cells, ObservableCollection<ICommandLine> CommandLine, CancellationToken token)
+        {
+            if (Cells == null)
+            {
+                return "The cell list is empty";
+            }
+            else if (CommandLine == null)
+            {
+                return "The command list is empty";
+            }
+            else
+            {
+                int flag = 1;
+                token.ThrowIfCancellationRequested();
+                int now = Number_of_SelectedStr(CommandLine);
+                try
+                {
+                    if (CommandLine[now].Command == null)
+                    {
+                        throw new Exception("The command is null");
+                    }
+                    if (CommandLine[now].Command is Question)
+                    {
+                        flag = CommandLine[now].Command.Work(Cells);
+                        int[] mass = Split(CommandLine[now].Str);
+                        switchNumberLine(CommandLine, mass[flag]);
+                    }
+                    else
+                    {
+                        flag = CommandLine[now].Command.Work(Cells);
+                        if (CommandLine[now].Command is Stop)
+                        {
+                            CommandLine[now].IsSelected = false;
+                            CommandLine[0].IsSelected = true;
+                            return "The command was successfully completed!";
+                        }
+                        else
+                        {
+                            switchNumberLine(CommandLine, Convert.ToInt32(CommandLine[now].Str));
+                        }
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+            }
+            return "The command was successfully completed!";
         }
 
         public int[] Split(string str)

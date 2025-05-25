@@ -153,8 +153,6 @@ namespace RGR_TIMP_4_sem.Models
         public string NameCommand { get { return name; } }
         public int Work(ObservableCollection<ICell> Cells)
         {
-
-
             if (Cells == null)
             {
                 throw new NullReferenceException("The cell list is empty");
@@ -171,10 +169,10 @@ namespace RGR_TIMP_4_sem.Models
                     else { ind_list++; }
                 }
                 if (Cells[ind_list].Value == 1)
-                { return 1; }
+                { return 0; }
 
                 else if (Cells[ind_list].Value == 0)
-                { return 0; }
+                { return 1; }
 
                 else { return -1; }
             }
