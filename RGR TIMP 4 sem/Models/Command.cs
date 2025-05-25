@@ -30,6 +30,10 @@ namespace RGR_TIMP_4_sem.Models
                 int ind_list = 0;
                 foreach (var t in Cells)
                 {
+                    if (t.Value != 0 && t.Value != 1)
+                    {
+                        throw new Exception("The cell value must be 0 or 1");
+                    }
                     if (t.IsSelected)
                     {
                         break;
@@ -59,6 +63,10 @@ namespace RGR_TIMP_4_sem.Models
                 int ind_list = 0;
                 foreach (var t in Cells)
                 {
+                    if (t.Value != 0 && t.Value != 1)
+                    {
+                        throw new Exception("The cell value must be 0 or 1");
+                    }
                     if (t.IsSelected)
                     {
                         break;
@@ -88,6 +96,10 @@ namespace RGR_TIMP_4_sem.Models
                 int ind_list = 0;
                 foreach (var t in Cells)
                 {
+                    if (t.Value != 0 && t.Value != 1)
+                    {
+                        throw new Exception("The cell value must be 0 or 1");
+                    }
                     if (t.IsSelected)
                     {
                         break;
@@ -117,6 +129,10 @@ namespace RGR_TIMP_4_sem.Models
                 int ind_list = 0;
                 foreach (var t in Cells)
                 {
+                    if (t.Value != 0 && t.Value != 1)
+                    {
+                        throw new Exception("The cell value must be 0 or 1");
+                    }
                     if (t.IsSelected)
                     {
                         break;
@@ -162,6 +178,11 @@ namespace RGR_TIMP_4_sem.Models
                 int ind_list = 0;
                 foreach (var t in Cells)
                 {
+                    if (t.Value != 0 && t.Value != 1)
+                    {
+                        throw new Exception("The cell value must be 0 or 1");
+                    }
+
                     if (t.IsSelected)
                     {
                         break;

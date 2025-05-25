@@ -26,6 +26,15 @@ namespace RGR_TIMP_4_sem.ViewModels
             return -1;
         }
 
+        public int FindCellByIndex(int index)
+        {
+            for (int i = 0; i < Cells.Count();i++)
+            {
+                if (Cells[i].Index == index) return i;
+            }
+            return -1;
+        }
+
         public int FindLeftVisible()
         {
             for (int i = 0; i < Cells.Count(); i++)

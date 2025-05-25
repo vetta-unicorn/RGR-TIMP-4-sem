@@ -154,7 +154,7 @@ public class MainViewModel : ReactiveObject
             var result = binAlgoritm.Working(-1, Cells, CommandLines, cts.Token);
             // Обновляем UI через Dispatcher
             Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => {
-                if (result == "The commands were successfully completed!")
+                if (result == "The commands were successfully completed.")
                 {
                     ConsoleBox = "The program was successfully completed!";
                 }
@@ -163,7 +163,7 @@ public class MainViewModel : ReactiveObject
                     ConsoleBox = result; // например, "The endless loop"
                     if (cellViewModel.FindSelectedCell() != -1) 
                         Cells[cellViewModel.FindSelectedCell()].IsSelected = false;
-                    Cells[0].IsSelected = true;
+                    Cells[cellViewModel.FindCellByIndex(0)].IsSelected = true;
                 }
                 // Обновляем выделение
                 if (commandFunc.FindSelectedLine() != -1)
@@ -179,34 +179,6 @@ public class MainViewModel : ReactiveObject
             });
         });
     }
-
-    //public void StartProgram()
-    //{
-    //    BinAlgoritm binAlgoritm = new BinAlgoritm();
-    //    bool Flag = false;
-    //    try
-    //    {
-    //        binAlgoritm.Working(-1, Cells, CommandLines);
-    //        if (commandFunc.FindSelectedLine() == -1)
-    //        {
-    //            throw new Exception("Can't find the selected line");
-    //        }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        ConsoleBox = ex.Message;
-    //        Flag = true;
-    //    }
-    //    finally
-    //    {
-    //        if (!Flag)
-    //        {
-    //            ConsoleBox = "The program was successfully completed!";
-    //        }
-    //        CommandLines[commandFunc.FindSelectedLine()].IsSelected = false;
-    //        CommandLines[0].IsSelected = true;
-    //    }
-    //}
 
     public async void StartLineByLine()
     {
@@ -225,33 +197,10 @@ public class MainViewModel : ReactiveObject
                     ConsoleBox = result; // например, "The endless loop"
                     if (cellViewModel.FindSelectedCell() != -1)
                         Cells[cellViewModel.FindSelectedCell()].IsSelected = false;
-                    Cells[0].IsSelected = true;
+                    Cells[cellViewModel.FindCellByIndex(0)].IsSelected = true;
                 }
             });
         });
-
-        //BinAlgoritm binAlgoritm = new BinAlgoritm();
-        //bool Flag = false;
-        //try
-        //{
-        //    binAlgoritm.Working(commandFunc.FindSelectedLine() + 1, Cells, CommandLines);
-        //    if (commandFunc.FindSelectedLine() == -1)
-        //    {
-        //        throw new Exception("Can't find the selected line");
-        //    }
-        //}
-        //catch (Exception ex)
-        //{
-        //    ConsoleBox = ex.Message;
-        //    Flag = true;
-        //}
-        //finally
-        //{
-        //    if (!Flag)
-        //    {
-        //        ConsoleBox = "The line was successfully completed!";
-        //    }
-        //}
     }
 
 

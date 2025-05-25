@@ -51,6 +51,15 @@ namespace RGR_TIMP_4_sem.Models
                         CommandLine[0].IsSelected = true;
                         return "The endless loop";
                     }
+
+                    int stop_flag = 0;
+                    foreach (var command in CommandLine)
+                    {
+                        if (command.Command is Stop) stop_flag++;
+                    }
+                    if (stop_flag < 1) return "No Stop has been detected. Please add Stop command!";
+                    if (stop_flag > 1) return "More than 1 Stop has been detected. Please keep 1 Stop command!";
+
                     try
                     {
                         if (CommandLine[now].Command == null)
@@ -61,6 +70,7 @@ namespace RGR_TIMP_4_sem.Models
                         {
                             flag = CommandLine[now].Command.Work(Cells);
                             int[] mass = Split(CommandLine[now].Str);
+                            if (mass.Length > 2 || mass.Length < 2) throw new Exception("Incorrect argument");
                             switchNumberLine(CommandLine, mass[flag]);
                             count_cycle++;
                         }
@@ -180,6 +190,10 @@ namespace RGR_TIMP_4_sem.Models
         //пофиксить выход за пределы массива ObservableCollection<IComandLine> ? 1,7 когда всего 6 строк
         public void switchNumberLine(ObservableCollection<ICommandLine> CommandLine, int index)
         {
+            if (index > CommandLine.Count() - 1 || index < 0)
+            {
+                throw new Exception("The line you want to switch to doesn't exist");
+            }
             if (CommandLine == null)
             {
                 throw new NullReferenceException("The Command list is empty");
