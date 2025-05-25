@@ -108,11 +108,10 @@ public class MainViewModel : ReactiveObject
             Cells[i].IsVisible = true;
         }
 
-        // ставим каретку по умолчанию на 0 ячейку
-        Cells[100].IsSelected = true;
-
         // вспомогательные классы
         cellViewModel = new CellViewModel(Cells);
+        // ставим каретку по умолчанию на 0 ячейку
+        Cells[cellViewModel.FindCellByIndex(0)].IsSelected = true;
 
         // линии программы
         CommandLines = new ObservableCollection<ICommandLine>();
@@ -124,9 +123,6 @@ public class MainViewModel : ReactiveObject
         // изначально выбираем первую строку программы
         CommandLines[0].IsSelected = true;
         commandFunc = new CommandFunc(CommandLines);
-
-        // задаем начальное значение
-        LastMadeLine = -1;
     }
 
     // подписываемся на событие по изменению видимости
@@ -152,7 +148,7 @@ public class MainViewModel : ReactiveObject
             BinAlgoritm binAlgoritm = new BinAlgoritm();
             var cts = new CancellationTokenSource();
             var result = binAlgoritm.Working(-1, Cells, CommandLines, cts.Token);
-            // Обновляем UI через Dispatcher
+
             Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => {
                 if (result == "The commands were successfully completed.")
                 {
@@ -160,12 +156,12 @@ public class MainViewModel : ReactiveObject
                 }
                 else
                 {
-                    ConsoleBox = result; // например, "The endless loop"
+                    ConsoleBox = result; 
                     if (cellViewModel.FindSelectedCell() != -1) 
                         Cells[cellViewModel.FindSelectedCell()].IsSelected = false;
                     Cells[cellViewModel.FindCellByIndex(0)].IsSelected = true;
                 }
-                // Обновляем выделение
+
                 if (commandFunc.FindSelectedLine() != -1)
                 {
                     CommandLines[commandFunc.FindSelectedLine()].IsSelected = false;
@@ -186,7 +182,7 @@ public class MainViewModel : ReactiveObject
             BinAlgoritm binAlgoritm = new BinAlgoritm();
             var cts = new CancellationTokenSource();
             var result = binAlgoritm.OneCommandWorking(Cells, CommandLines, cts.Token);
-            // Обновляем UI через Dispatcher
+
             Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => {
                 if (result == "The command was successfully completed!")
                 {
@@ -194,7 +190,7 @@ public class MainViewModel : ReactiveObject
                 }
                 else
                 {
-                    ConsoleBox = result; // например, "The endless loop"
+                    ConsoleBox = result; 
                     if (cellViewModel.FindSelectedCell() != -1)
                         Cells[cellViewModel.FindSelectedCell()].IsSelected = false;
                     Cells[cellViewModel.FindCellByIndex(0)].IsSelected = true;
@@ -206,7 +202,7 @@ public class MainViewModel : ReactiveObject
 
     public void AddNewRow()
     {
-        int rowNumber = CommandLines.Count; // Нумерация строк
+        int rowNumber = CommandLines.Count; 
         CommandLines.Add(new CommandLine { Number = rowNumber });
     }
 
