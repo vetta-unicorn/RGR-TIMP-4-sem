@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RGR_TIMP_4_sem.Interfaces;
+using System.Text.Json.Serialization;
 
 namespace RGR_TIMP_4_sem.Models
 {

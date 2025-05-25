@@ -18,7 +18,6 @@ namespace RGR_TIMP_4_sem.Models
 
         private readonly string name = "<-";
         public string NameCommand { get { return name; } }
-        public LeftMove() { }
         public int Work(ObservableCollection<ICell> Cells)
         {
             if (Cells == null)
