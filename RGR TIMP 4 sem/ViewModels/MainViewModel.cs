@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -10,6 +11,12 @@ using RGR_TIMP_4_sem.Models;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Threading;
+using RGR_TIMP_4_sem.DanyaWork;
+using Avalonia.Controls;
+using Avalonia.Threading;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Interactivity;
+using Avalonia.Controls.Primitives;
 
 
 namespace RGR_TIMP_4_sem.ViewModels;
@@ -19,6 +26,8 @@ public class MainViewModel : ReactiveObject
     // вспомогательные классы
     CellViewModel cellViewModel;
     CommandFunc commandFunc;
+    Load load;
+    Save save;
 
     // команды для кнопок
     public ReactiveCommand<Unit, Unit> ButtonClickCommandLeft { get; }
@@ -27,6 +36,11 @@ public class MainViewModel : ReactiveObject
     public ReactiveCommand<Unit, Unit> DeleteRowCommand { get; } //команда удаления строки кода
     public ReactiveCommand<Unit, Unit> Start { get; } // запустить программу
     public ReactiveCommand<Unit, Unit> LineByLine { get; } // идти по строкам
+    public ReactiveCommand<Unit, Unit> OpenFile { get; } // открыть файл с программой
+    public ReactiveCommand<Unit, Unit> SaveFile { get; } // сохранить файл
+    public ReactiveCommand<Unit, Unit> DeleteFile { get; } // удалить файл
+    public ReactiveCommand<Unit, Unit> CreateNewFile { get; } // создать новый файл
+    public ReactiveCommand<Unit, Unit> OnSaveTo { get; } // открыть окно для ввода
 
     // ячейки
     private ObservableCollection<ICell> _cells;
@@ -39,7 +53,9 @@ public class MainViewModel : ReactiveObject
     public ObservableCollection<ICell> VisibleCells { get; private set; }
 
     // количество ячеек
-    public int allCellNum;
+    private int allCellNum;
+    private int leftDefaultBorder;
+    private int rightDefaultBorder;
 
 
     // строки программы
@@ -62,12 +78,14 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _ConsoleBox, value);
     }
 
-    // последняя выполняемая строка
-    private int _LastMadeLine;
-    public int LastMadeLine
+    private static string controlDir = AppContext.BaseDirectory;
+    private static string dataSavePath = Path.Combine(controlDir, "DataSave\\");
+
+    private string _SavePath;
+    public string SavePath
     {
-        get => _LastMadeLine;
-        set => this.RaiseAndSetIfChanged(ref _LastMadeLine, value);
+        get => _SavePath;
+        set => this.RaiseAndSetIfChanged(ref _SavePath, value);
     }
 
     public MainViewModel()
@@ -75,12 +93,57 @@ public class MainViewModel : ReactiveObject
         // команды для кнопок
         ButtonClickCommandLeft = ReactiveCommand.Create(OnButtonClickLeft);
         ButtonClickCommandRight = ReactiveCommand.Create(OnButtonClickRight);
+
         Start = ReactiveCommand.Create(StartProgram);
+        AddRowCommand = ReactiveCommand.Create(AddNewRow);
+        DeleteRowCommand = ReactiveCommand.Create(DeleteRow);
+        LineByLine = ReactiveCommand.Create(StartLineByLine);
+
+        // команды для работы с файлами
+        CreateNewFile = ReactiveCommand.Create(CreateFile);
+        SaveFile = ReactiveCommand.Create(SaveToFile);
+        OnSaveTo = ReactiveCommand.Create(OnSaveToFile);
 
         allCellNum = 201;
-        int leftDefaultBorder = 91;
-        int rightDefaultBorder = 109;
+        leftDefaultBorder = 91;
+        rightDefaultBorder = 109;
 
+        CreateFile();
+
+        save = new Save();
+        load = new Load();
+    }
+
+    // подписываемся на событие по изменению видимости
+    private void SubscribeToVisibility(ICell cell)
+    {
+        cell.WhenAnyValue(x => x.IsVisible)
+            .Subscribe(isVisible =>
+            {
+                if (VisibleCells != null && isVisible && !VisibleCells.Contains(cell))
+                {
+                    if (VisibleCells.Count() != 0 && VisibleCells.First().Index > cell.Index) VisibleCells.Insert(0, cell);
+                    else VisibleCells.Add(cell);
+                }
+                else if (VisibleCells != null && !isVisible && VisibleCells.Contains(cell))
+                {
+                    VisibleCells.Remove(cell);
+                }
+            });
+    }
+
+    public void SaveToFile()
+    {
+        //
+    }
+
+    private void OnSaveToFile()
+    {
+        //
+    }
+
+    public void CreateFile()
+    {
         Cells = new ObservableCollection<ICell>();
         VisibleCells = new ObservableCollection<ICell>();
         CellViewModel.InitializeCells(Cells, allCellNum);
@@ -115,33 +178,16 @@ public class MainViewModel : ReactiveObject
 
         // линии программы
         CommandLines = new ObservableCollection<ICommandLine>();
-        AddRowCommand = ReactiveCommand.Create(AddNewRow);
-        DeleteRowCommand = ReactiveCommand.Create(DeleteRow);
-        LineByLine = ReactiveCommand.Create(StartLineByLine);
+
         AddNewRow();
 
         // изначально выбираем первую строку программы
         CommandLines[0].IsSelected = true;
         commandFunc = new CommandFunc(CommandLines);
+
+        ConsoleBox = "";
     }
 
-    // подписываемся на событие по изменению видимости
-    private void SubscribeToVisibility(ICell cell)
-    {
-        cell.WhenAnyValue(x => x.IsVisible)
-            .Subscribe(isVisible =>
-            {
-                if (VisibleCells != null && isVisible && !VisibleCells.Contains(cell))
-                {
-                    if (VisibleCells.Count() != 0 && VisibleCells.First().Index > cell.Index) VisibleCells.Insert(0, cell);
-                    else VisibleCells.Add(cell);
-                }
-                else if (VisibleCells != null && !isVisible && VisibleCells.Contains(cell))
-                {
-                    VisibleCells.Remove(cell);
-                }
-            });
-    }
     public async void StartProgram()
     {
         await Task.Run(() => {

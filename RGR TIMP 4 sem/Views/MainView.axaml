@@ -15,8 +15,15 @@
 		<local:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
 	</UserControl.Resources>
 
-	<StackPanel Background="LightBlue"
-				>
+	<StackPanel Background="LightBlue">
+		
+		<!-- Файловое меню -->
+		<DockPanel Background="White" >
+			
+			
+		</DockPanel>
+
+
 		<!-- Индексы ячеек -->
 		<ItemsControl ItemsSource="{Binding VisibleCells}" Background="White" Margin="50, 30, 50, 0" HorizontalAlignment="Center">
 			<ItemsControl.ItemsPanel>
