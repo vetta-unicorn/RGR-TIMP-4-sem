@@ -33,7 +33,7 @@ public class Load
                 using var document = JsonDocument.Parse(fileContent);
                 if (document.RootElement.ValueKind != JsonValueKind.Array)
                 {
-                    throw new Exception($"Файл {filePath} не содержит массив JSON.");
+                    throw new Exception($"File {filePath} does not contain JSON array.");
                 }
 
                 var deserializeItems = JsonSerializer.Deserialize<List<JsonElement>>(fileContent);
@@ -62,7 +62,7 @@ public class Load
             }
             catch (Exception ex)
             {
-                throw new Exception($"Ошибка при обработке файла {filePath}: {ex.Message}", ex);
+                throw new Exception($"Error with file processing {filePath}: {ex.Message}", ex);
             }
         }
 

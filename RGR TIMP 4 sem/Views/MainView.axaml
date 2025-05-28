@@ -18,10 +18,52 @@
 	<StackPanel Background="LightBlue">
 		
 		<!-- Файловое меню -->
-		<DockPanel Background="White" >
+		<StackPanel Background="White" >
+
+			<Grid Margin="10">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+				
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="200" />
+					<ColumnDefinition Width="200" />
+					<ColumnDefinition Width="200" />
+				</Grid.ColumnDefinitions>
+				
+				<Button Grid.Row="0" Grid.Column="0"
+						Content="Open File"
+						Command="{Binding OpenFile}"/>
+
+				<Button Grid.Row="1" Grid.Column="0"
+						Content="Create New File"
+						Command="{Binding CreateNewFile}"
+					    IsVisible ="{Binding IsOpenMenuSeen}"/>
+				
+				<Button Grid.Row="2" Grid.Column="0"
+						Content="Open exising file"
+						Command="{Binding OpenExistingFile}"
+					    IsVisible ="{Binding IsOpenMenuSeen}"/>
+				
+				<ComboBox Grid.Row="3" Grid.Column="0"
+						  IsVisible ="{Binding IsOpenMenuSeen}"
+						  ItemsSource="{Binding MyFiles.FileItems}"
+						  SelectedItem="{Binding SelectedFile}"
+						  Width="200"
+						  HorizontalAlignment="Left">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding FileName}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+
+			</Grid>
 			
-			
-		</DockPanel>
+		</StackPanel>
 
 
 		<!-- Индексы ячеек -->

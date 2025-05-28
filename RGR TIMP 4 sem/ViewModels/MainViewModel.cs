@@ -36,7 +36,9 @@ public class MainViewModel : ReactiveObject
     public ReactiveCommand<Unit, Unit> DeleteRowCommand { get; } //команда удаления строки кода
     public ReactiveCommand<Unit, Unit> Start { get; } // запустить программу
     public ReactiveCommand<Unit, Unit> LineByLine { get; } // идти по строкам
-    public ReactiveCommand<Unit, Unit> OpenFile { get; } // открыть файл с программой
+
+    public ReactiveCommand<Unit, Unit> OpenFile { get; } // менюшка с выбором что открыть
+    public ReactiveCommand<Unit, Unit> OpenExistingFile { get; } // открыть существующий файл
     public ReactiveCommand<Unit, Unit> SaveFile { get; } // сохранить файл
     public ReactiveCommand<Unit, Unit> DeleteFile { get; } // удалить файл
     public ReactiveCommand<Unit, Unit> CreateNewFile { get; } // создать новый файл
@@ -68,7 +70,7 @@ public class MainViewModel : ReactiveObject
     }
 
     public List<ICommand> AvailableCommands => CommandList.Instance.Commands;
-
+    
 
     // для вывода ошибок
     private string _ConsoleBox;
@@ -81,11 +83,24 @@ public class MainViewModel : ReactiveObject
     private static string controlDir = AppContext.BaseDirectory;
     private static string dataSavePath = Path.Combine(controlDir, "DataSave\\");
 
-    private string _SavePath;
-    public string SavePath
+    private FileItem _selectedFile;
+    public FileItem SelectedFile
     {
-        get => _SavePath;
-        set => this.RaiseAndSetIfChanged(ref _SavePath, value);
+        get => _selectedFile;
+        set => this.RaiseAndSetIfChanged(ref _selectedFile, value);
+    }
+    private FileList _MyFiles;
+    public FileList MyFiles
+    {
+        get => _MyFiles;
+        set => this.RaiseAndSetIfChanged(ref _MyFiles, value);
+    }
+
+    private bool _isOpenMenuSeen = false;
+    public bool IsOpenMenuSeen
+    {
+        get => _isOpenMenuSeen;
+        set => this.RaiseAndSetIfChanged(ref _isOpenMenuSeen, value);
     }
 
     public MainViewModel()
@@ -103,6 +118,8 @@ public class MainViewModel : ReactiveObject
         CreateNewFile = ReactiveCommand.Create(CreateFile);
         SaveFile = ReactiveCommand.Create(SaveToFile);
         OnSaveTo = ReactiveCommand.Create(OnSaveToFile);
+        OpenFile = ReactiveCommand.Create(Open);
+        OpenExistingFile = ReactiveCommand.Create(OpenExisting);
 
         allCellNum = 201;
         leftDefaultBorder = 91;
@@ -112,6 +129,18 @@ public class MainViewModel : ReactiveObject
 
         save = new Save();
         load = new Load();
+
+        MyFiles = new FileList(dataSavePath);
+
+        //this.WhenAnyValue(x => x.SelectedFile)
+        //    .Subscribe(file =>
+        //    {
+        //        if (file != null)
+        //        {
+        //            Console.WriteLine($"Selected file: {file.FileName}");
+        //            // Здесь можно добавить логику при выборе файла
+        //        }
+        //    });
     }
 
     // подписываемся на событие по изменению видимости
@@ -130,6 +159,82 @@ public class MainViewModel : ReactiveObject
                     VisibleCells.Remove(cell);
                 }
             });
+    }
+
+    public void Open()
+    {
+        IsOpenMenuSeen = !IsOpenMenuSeen;
+    }
+
+    public void OpenExisting()
+    {
+        try
+        {
+            (List<ICommandLine>, List<ICell>, bool) tuple = load.LoadData(dataSavePath, SelectedFile.FileName);
+            if (!tuple.Item3)
+            {
+                ConsoleBox = "The file doesn't exist in this directory!";
+            }
+            SetNewWindow(tuple.Item1, tuple.Item2);
+        }
+        catch (Exception ex)
+        {
+            ConsoleBox = ex.Message;
+        }
+    }
+
+    public void SetNewWindow(List<ICommandLine> newLines, List<ICell> nCells)
+    {
+        ObservableCollection<ICommandLine> newCommandLines = new ObservableCollection<ICommandLine>();
+        ObservableCollection<ICell> newCells = new ObservableCollection<ICell>();
+        for (int i = 0; i < newLines.Count(); i++)
+        {
+            newCommandLines.Add(newLines[i]);
+        }
+
+        for (int i = 0; i < nCells.Count(); i++)
+        {
+            newCells.Add(nCells[i]);
+        }
+
+        Cells = newCells;
+        VisibleCells = new ObservableCollection<ICell>();
+        CellViewModel.InitializeCells(Cells, allCellNum);
+
+        foreach (var cell in Cells)
+        {
+            SubscribeToVisibility(cell);
+        }
+
+        Cells.CollectionChanged += (s, e) =>
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ICell newCell in e.NewItems)
+                {
+                    SubscribeToVisibility(newCell);
+                }
+            }
+        };
+
+        for (int i = leftDefaultBorder; i < rightDefaultBorder + 1; i++)
+        {
+            Cells[i].IsVisible = true;
+        }
+
+
+        cellViewModel = new CellViewModel(Cells);
+
+        Cells[cellViewModel.FindCellByIndex(0)].IsSelected = true;
+
+        CommandLines = newCommandLines;
+
+        AddNewRow();
+
+        CommandLines[0].IsSelected = true;
+        commandFunc = new CommandFunc(CommandLines);
+
+        ConsoleBox = "";
     }
 
     public void SaveToFile()
@@ -196,14 +301,14 @@ public class MainViewModel : ReactiveObject
             var result = binAlgoritm.Working(-1, Cells, CommandLines, cts.Token);
 
             Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => {
-                if (result == "The commands were successfully completed.")
+                if (result == "The commands were successfully completed!")
                 {
-                    ConsoleBox = "The program was successfully completed!";
+                    ConsoleBox = result;
                 }
                 else
                 {
-                    ConsoleBox = result; 
-                    if (cellViewModel.FindSelectedCell() != -1) 
+                    ConsoleBox = result;
+                    if (cellViewModel.FindSelectedCell() != -1)
                         Cells[cellViewModel.FindSelectedCell()].IsSelected = false;
                     Cells[cellViewModel.FindCellByIndex(0)].IsSelected = true;
                 }
