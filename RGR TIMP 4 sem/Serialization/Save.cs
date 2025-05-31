@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
+using RGR_TIMP_4_sem.Interfaces;
 
 namespace RGR_TIMP_4_sem.DanyaWork;
 
 public class Save
 {
-    public bool SaveData(string directoryPath, string fileName, List<object> fileContent)
+    public bool SaveData(string directoryPath, string fileName, List<IJsonDataItem> fileContent)
     {
         try
         {
@@ -29,9 +30,8 @@ public class Save
         }
         catch (Exception ex)
         {
-            throw new Exception($"Не удалось создать файл: {fileName} \n Ошибка: {ex}");
+            throw new Exception($"Can't create file: {fileName} \n Error: {ex}");
         }
-        return false;
     }
     private string GenerateUniqueName(string directoryPath, string baseName, string extension)
     {

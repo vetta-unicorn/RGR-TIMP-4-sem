@@ -9,7 +9,7 @@ using RGR_TIMP_4_sem.Models;
 namespace RGR_TIMP_4_sem.Interfaces
 {
     [JsonDerivedType(typeof(CellModel), typeDiscriminator: "CellModel")]
-    public interface ICell
+    public interface ICell : IJsonDataItem
     {
         public bool IsSelected { get; set; }
         public int Index { get; set; }

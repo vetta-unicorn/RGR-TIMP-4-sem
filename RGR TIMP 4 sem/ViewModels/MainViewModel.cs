@@ -17,6 +17,7 @@ using Avalonia.Threading;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Controls.Primitives;
+using System.Diagnostics;
 
 
 namespace RGR_TIMP_4_sem.ViewModels;
@@ -52,7 +53,12 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _cells, value);
     }
 
-    public ObservableCollection<ICell> VisibleCells { get; private set; }
+    private ObservableCollection<ICell> _VisibleCells;
+    public ObservableCollection<ICell> VisibleCells
+    {
+        get => _VisibleCells;
+        set => this.RaiseAndSetIfChanged(ref _VisibleCells, value);
+    }
 
     // количество ячеек
     private int allCellNum;
@@ -103,6 +109,20 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _isOpenMenuSeen, value);
     }
 
+    private bool _isSaveMenuSeen = false;
+    public bool IsSaveMenuSeen
+    {
+        get => _isSaveMenuSeen;
+        set => this.RaiseAndSetIfChanged(ref _isSaveMenuSeen, value);
+    }
+
+    private string _saveFileName;
+    public string SaveFileName
+    {
+        get => _saveFileName;
+        set => this.RaiseAndSetIfChanged(ref _saveFileName, value);
+    }
+
     public MainViewModel()
     {
         // команды для кнопок
@@ -131,16 +151,6 @@ public class MainViewModel : ReactiveObject
         load = new Load();
 
         MyFiles = new FileList(dataSavePath);
-
-        //this.WhenAnyValue(x => x.SelectedFile)
-        //    .Subscribe(file =>
-        //    {
-        //        if (file != null)
-        //        {
-        //            Console.WriteLine($"Selected file: {file.FileName}");
-        //            // Здесь можно добавить логику при выборе файла
-        //        }
-        //    });
     }
 
     // подписываемся на событие по изменению видимости
@@ -187,10 +197,6 @@ public class MainViewModel : ReactiveObject
     {
         ObservableCollection<ICommandLine> newCommandLines = new ObservableCollection<ICommandLine>();
         ObservableCollection<ICell> newCells = new ObservableCollection<ICell>();
-        for (int i = 0; i < newLines.Count(); i++)
-        {
-            newCommandLines.Add(newLines[i]);
-        }
 
         for (int i = 0; i < nCells.Count(); i++)
         {
@@ -222,16 +228,30 @@ public class MainViewModel : ReactiveObject
             Cells[i].IsVisible = true;
         }
 
-
         cellViewModel = new CellViewModel(Cells);
 
-        Cells[cellViewModel.FindCellByIndex(0)].IsSelected = true;
+        var cmds = CommandList.Instance.Commands;
+        foreach (var line in newLines)
+        {
+            if (line.Command != null)
+            {
+                var name = line.Command.NameCommand;
+                var match = cmds.FirstOrDefault(cmd => cmd.NameCommand == name);
+                if (match != null )line.Command = match;
 
-        CommandLines = newCommandLines;
+                bool Flag1 = ReferenceEquals(line.Command, match); // должно быть true
+                bool Flag2 = AvailableCommands.Contains(line.Command);
+            }
+        }
 
-        AddNewRow();
+        CommandLines = new ObservableCollection<ICommandLine>(newLines);
 
-        CommandLines[0].IsSelected = true;
+        foreach (var l in newLines)
+            Debug.WriteLine(l.Command.GetType().Name + " @" + l.Command.GetHashCode());
+        foreach (var c in cmds)
+            Debug.WriteLine("Available: " + c.GetType().Name + " @" + c.GetHashCode());
+
+
         commandFunc = new CommandFunc(CommandLines);
 
         ConsoleBox = "";
@@ -239,12 +259,37 @@ public class MainViewModel : ReactiveObject
 
     public void SaveToFile()
     {
-        //
+        IsSaveMenuSeen = !IsSaveMenuSeen;
     }
 
     private void OnSaveToFile()
     {
-        //
+        bool Marker = true;
+        List<IJsonDataItem> allItems = new List<IJsonDataItem>();
+        foreach (var cell in Cells)
+        {
+            allItems.Add(cell);
+        }
+        foreach (var line in CommandLines)
+        {
+            allItems.Add(line);
+        }
+
+        try
+        {
+            bool Flag = save.SaveData(dataSavePath, SaveFileName, allItems);
+            if (!Flag) ConsoleBox = "Unexpected error!";
+        }
+        catch (Exception ex)
+        {
+            Marker = false;
+            ConsoleBox = ex.Message;
+        }
+        finally
+        {
+            if (Marker) ConsoleBox = "The file has been successfully saved!";
+        }
+
     }
 
     public void CreateFile()

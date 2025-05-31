@@ -68,4 +68,61 @@ public class Load
 
         return (commandItems, cellItems, anyFilesProcessed);
     }
+
+    //public static class SerializationSettings
+    //{
+    //    public static readonly JsonSerializerOptions PolymorphicOptions = new()
+    //    {
+    //        TypeInfoResolver = MyPolymorphicContext.Default
+    //    };
+    //}
+
+
+    //public (List<ICommandLine>, List<ICell>, bool) LoadData(string directoryPath, string searchPattern)
+    //{
+    //    List<ICommandLine> commandItems = new List<ICommandLine>();
+    //    List<ICell> cellItems = new List<ICell>();
+    //    bool anyFilesProcessed = false;
+
+    //    if (!Directory.Exists(directoryPath))
+    //    {
+    //        return (commandItems, cellItems, false);
+    //    }
+
+    //    foreach (var filePath in Directory.GetFiles(directoryPath, searchPattern))
+    //    {
+    //        try
+    //        {
+    //            string fileContent = File.ReadAllText(filePath);
+    //            Сначала попробуем как список ICell
+    //           var cells = JsonSerializer.Deserialize<List<ICell>>(fileContent, new JsonSerializerOptions
+    //           {
+    //               TypeInfoResolver = MyPolymorphicContext.Default
+    //           });
+    //            if (cells != null && cells.Count > 0)
+    //            {
+    //                cellItems.AddRange(cells);
+    //                anyFilesProcessed = true;
+    //                continue;
+    //            }
+    //            Если не клетки, возможно, команды
+    //           var commands = JsonSerializer.Deserialize<List<ICommandLine>>(fileContent, new JsonSerializerOptions
+    //           {
+    //               TypeInfoResolver = MyPolymorphicContext.Default
+    //           });
+    //            if (commands != null && commands.Count > 0)
+    //            {
+    //                commandItems.AddRange(commands);
+    //                anyFilesProcessed = true;
+    //            }
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            throw new Exception($"Error with file processing {filePath}: {ex.Message}", ex);
+    //        }
+    //    }
+
+    //    return (commandItems, cellItems, anyFilesProcessed);
+    //}
+
 }

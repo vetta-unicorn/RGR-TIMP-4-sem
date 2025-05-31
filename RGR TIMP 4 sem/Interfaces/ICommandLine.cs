@@ -9,7 +9,7 @@ using RGR_TIMP_4_sem.Models;
 namespace RGR_TIMP_4_sem.Interfaces
 {
     [JsonDerivedType(typeof(CommandLine), typeDiscriminator: "CommandLine")]
-    public interface ICommandLine
+    public interface ICommandLine : IJsonDataItem
     {
         public bool IsSelected { get; set; }
         public int Number { get; set; }

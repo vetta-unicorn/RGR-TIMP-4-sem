@@ -26,5 +26,6 @@ namespace RGR_TIMP_4_sem.Interfaces
         /// <param name="index"> индекс в глобальных координатах координатах</param>
         /// <returns></returns>
         public int Work(ObservableCollection<ICell> Cells);
+
     }
 }
