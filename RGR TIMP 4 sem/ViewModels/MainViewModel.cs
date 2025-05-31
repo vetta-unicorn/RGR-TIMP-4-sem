@@ -180,6 +180,9 @@ public class MainViewModel : ReactiveObject
     {
         try
         {
+            if (SelectedFile == null || SelectedFile.FileName == "" || SelectedFile.FileName == null) 
+                throw new Exception("No file selected!");
+
             (List<ICommandLine>, List<ICell>, bool) tuple = load.LoadData(dataSavePath, SelectedFile.FileName);
             if (!tuple.Item3)
             {

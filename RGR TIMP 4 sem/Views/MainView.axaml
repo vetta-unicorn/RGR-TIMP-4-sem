@@ -72,7 +72,7 @@
 				
 				<TextBox Grid.Row="2" Grid.Column="1"
 						 Text="{Binding SaveFileName, Mode=TwoWay}"
-						 Watermark="*.json" 
+						 Watermark="fileName" 
 						 IsVisible ="{Binding IsSaveMenuSeen}"/>
 
 
