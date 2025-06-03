@@ -80,6 +80,7 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref commandLines, value);
     }
 
+    // видимыес троки программы
     private ObservableCollection<ICommandLine> _visibleCommandLines;
     public ObservableCollection<ICommandLine> VisibleCommandLines
     {
@@ -94,7 +95,7 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _commandNames, value);
     }
 
-    public List<ICommand> AvailableCommands => CommandList.Instance.Commands;
+    public List<ICommand> AvailableCommands { get; set; }
     
 
     // для вывода ошибок
@@ -167,6 +168,16 @@ public class MainViewModel : ReactiveObject
         allCellNum = 201;
         leftDefaultBorder = 91;
         rightDefaultBorder = 109;
+
+        AvailableCommands = new List<ICommand>
+        {
+            new LeftMove(),
+            new RightMove(),
+            new One(),
+            new Zero(),
+            new Stop(),
+            new Question()
+        };
 
         CreateFile();
 
@@ -274,7 +285,7 @@ public class MainViewModel : ReactiveObject
 
         cellViewModel = new CellViewModel(Cells);
 
-        var cmds = CommandList.Instance.Commands;
+        var cmds = AvailableCommands;
         foreach (var line in newLines)
         {
             if (line.Command != null)
@@ -282,9 +293,6 @@ public class MainViewModel : ReactiveObject
                 var name = line.Command.NameCommand;
                 var match = cmds.FirstOrDefault(cmd => cmd.NameCommand == name);
                 if (match != null )line.Command = match;
-
-                bool Flag1 = ReferenceEquals(line.Command, match); // должно быть true
-                bool Flag2 = AvailableCommands.Contains(line.Command);
             }
         }
 
@@ -336,10 +344,10 @@ public class MainViewModel : ReactiveObject
 
         ConsoleBox = "The file has been successfully opened!";
 
-        //foreach (var l in newLines)
-        //    Debug.WriteLine(l.Command.GetType().Name + " @" + l.Command.GetHashCode());
-        //foreach (var c in cmds)
-        //    Debug.WriteLine("Available: " + c.GetType().Name + " @" + c.GetHashCode());
+        foreach (var l in newLines)
+            Debug.WriteLine(l.Command.GetType().Name + " @" + l.Command.GetHashCode());
+        foreach (var c in cmds)
+            Debug.WriteLine("Available: " + c.GetType().Name + " @" + c.GetHashCode());
     }
 
     public void SaveToFile()

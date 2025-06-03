@@ -23,7 +23,6 @@ namespace RGR_TIMP_4_sem.Interfaces
         /// 
         /// </summary>
         /// <param name="Cells"> лист клеток </param>
-        /// <param name="index"> индекс в глобальных координатах координатах</param>
         /// <returns></returns>
         public int Work(ObservableCollection<ICell> Cells);
 

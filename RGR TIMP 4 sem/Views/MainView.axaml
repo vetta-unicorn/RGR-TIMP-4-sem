@@ -173,7 +173,6 @@
 									  Width="150"
 									  SelectedItem="{Binding Command, Mode=TwoWay}"
 									  ItemsSource="{Binding DataContext.AvailableCommands, RelativeSource={RelativeSource AncestorType=UserControl}}">
-
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<TextBlock Text="{Binding NameCommand}" />
@@ -185,6 +184,9 @@
 									</DataTemplate>
 								</ComboBox.SelectionBoxItemTemplate>
 							</ComboBox>
+
+
+
 
 							<TextBox Grid.Column="2"
                                      Text="{Binding Str, Mode=TwoWay}"
