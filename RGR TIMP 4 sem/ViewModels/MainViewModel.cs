@@ -95,8 +95,8 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _commandNames, value);
     }
 
-    public List<ICommand> AvailableCommands = CommandList.Instance();
-    
+    public List<ICommand> AvailableCommands => CommandList.Instance.Commands;
+
 
     // для вывода ошибок
     private string _ConsoleBox;
@@ -168,16 +168,6 @@ public class MainViewModel : ReactiveObject
         allCellNum = 201;
         leftDefaultBorder = 91;
         rightDefaultBorder = 109;
-
-        AvailableCommands = new List<ICommand>
-        {
-            new LeftMove(),
-            new RightMove(),
-            new One(),
-            new Zero(),
-            new Stop(),
-            new Question()
-        };
 
         CreateFile();
 
