@@ -12,6 +12,7 @@ namespace RGR_TIMP_4_sem.Interfaces
     public interface ICommandLine : IJsonDataItem
     {
         public bool IsSelected { get; set; }
+        public bool IsVisible { get; set; }
         public int Number { get; set; }
         public ICommand Command { get; set; }
         public string? Str { get; set; }

@@ -6,6 +6,7 @@ namespace RGR_TIMP_4_sem.Models
     public class CommandLine : ReactiveObject, ICommandLine
     {
         private bool _isSelected;
+        private bool _isVisible;
         private int number;
         private ICommand command;
         private string? str; 
@@ -15,6 +16,12 @@ namespace RGR_TIMP_4_sem.Models
         {
             get => _isSelected;
             set => this.RaiseAndSetIfChanged(ref _isSelected, value);
+        }
+
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set => this.RaiseAndSetIfChanged(ref _isVisible, value);
         }
 
         public int Number

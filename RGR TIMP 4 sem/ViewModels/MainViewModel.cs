@@ -18,6 +18,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Controls.Primitives;
 using System.Diagnostics;
+using Avalonia.Controls.Shapes;
 
 
 namespace RGR_TIMP_4_sem.ViewModels;
@@ -33,6 +34,10 @@ public class MainViewModel : ReactiveObject
     // команды для кнопок
     public ReactiveCommand<Unit, Unit> ButtonClickCommandLeft { get; }
     public ReactiveCommand<Unit, Unit> ButtonClickCommandRight { get; }
+    
+    public ReactiveCommand<Unit, Unit> ButtonClickLineUp { get; }
+    public ReactiveCommand<Unit, Unit> ButtonClickLineDown { get; }
+
     public ReactiveCommand<Unit, Unit> AddRowCommand { get; } //команда добавления строки кода 
     public ReactiveCommand<Unit, Unit> DeleteRowCommand { get; } //команда удаления строки кода
     public ReactiveCommand<Unit, Unit> Start { get; } // запустить программу
@@ -75,6 +80,20 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref commandLines, value);
     }
 
+    private ObservableCollection<ICommandLine> _visibleCommandLines;
+    public ObservableCollection<ICommandLine> VisibleCommandLines
+    {
+        get => _visibleCommandLines;
+        set => this.RaiseAndSetIfChanged(ref _visibleCommandLines, value);
+    }
+
+    private ObservableCollection<string> _commandNames;
+    public ObservableCollection<string> CommandNames
+    {
+        get => _commandNames;
+        set => this.RaiseAndSetIfChanged(ref _commandNames, value);
+    }
+
     public List<ICommand> AvailableCommands => CommandList.Instance.Commands;
     
 
@@ -87,7 +106,7 @@ public class MainViewModel : ReactiveObject
     }
 
     private static string controlDir = AppContext.BaseDirectory;
-    private static string dataSavePath = Path.Combine(controlDir, "DataSave\\");
+    private static string dataSavePath = System.IO.Path.Combine(controlDir, "DataSave\\");
 
     private FileItem _selectedFile;
     public FileItem SelectedFile
@@ -129,6 +148,10 @@ public class MainViewModel : ReactiveObject
         ButtonClickCommandLeft = ReactiveCommand.Create(OnButtonClickLeft);
         ButtonClickCommandRight = ReactiveCommand.Create(OnButtonClickRight);
 
+        // команды для листания строк кода
+        ButtonClickLineUp = ReactiveCommand.Create(OnButtonClickLineUp);
+        ButtonClickLineDown = ReactiveCommand.Create(OnButtonClickLineDown);
+
         Start = ReactiveCommand.Create(StartProgram);
         AddRowCommand = ReactiveCommand.Create(AddNewRow);
         DeleteRowCommand = ReactiveCommand.Create(DeleteRow);
@@ -167,6 +190,24 @@ public class MainViewModel : ReactiveObject
                 else if (VisibleCells != null && !isVisible && VisibleCells.Contains(cell))
                 {
                     VisibleCells.Remove(cell);
+                }
+            });
+    }
+
+    // подписываемся на изменение по видимости для строк программы
+    private void SubscribeToVisibilityLines(ICommandLine line)
+    {
+        line.WhenAnyValue(x => x.IsVisible)
+            .Subscribe(isVisible =>
+            {
+                if (VisibleCommandLines != null && isVisible && !VisibleCommandLines.Contains(line))
+                {
+                    if (VisibleCommandLines.Count() != 0 && VisibleCommandLines.First().Number > line.Number) VisibleCommandLines.Insert(0, line);
+                    else VisibleCommandLines.Add(line);
+                }
+                else if (VisibleCommandLines != null && !isVisible && VisibleCommandLines.Contains(line))
+                {
+                    VisibleCommandLines.Remove(line);
                 }
             });
     }
@@ -248,16 +289,57 @@ public class MainViewModel : ReactiveObject
         }
 
         CommandLines = new ObservableCollection<ICommandLine>(newLines);
+        VisibleCommandLines = new ObservableCollection<ICommandLine>();
 
-        foreach (var l in newLines)
-            Debug.WriteLine(l.Command.GetType().Name + " @" + l.Command.GetHashCode());
-        foreach (var c in cmds)
-            Debug.WriteLine("Available: " + c.GetType().Name + " @" + c.GetHashCode());
+        // изначально выбираем первую строку программы
+        commandFunc = new CommandFunc();
 
+        foreach(var line in CommandLines)
+        {
+            SubscribeToVisibilityLines(line);
+        }
 
-        commandFunc = new CommandFunc(CommandLines);
+        int lineCount = CommandLines.Count();
+        if (lineCount > 7)
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                CommandLines[i].IsVisible = true;
+            }
+        }
+        else
+        {
+            foreach (var line in CommandLines)
+            {
+                line.IsVisible = true;
+            }
+        }
 
-        ConsoleBox = "";
+        // Подписываемся на добавление новых команд
+        CommandLines.CollectionChanged += (s, e) =>
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ICommandLine newLine in e.NewItems)
+                {
+                    SubscribeToVisibilityLines(newLine);
+                }
+            }
+        };
+
+        CommandNames = new ObservableCollection<string>();
+
+        foreach (var comm in CommandLines)
+        {
+            CommandNames.Add(CommandToStringConverter.CommandToString(comm.Command));
+        }
+
+        ConsoleBox = "The file has been successfully opened!";
+
+        //foreach (var l in newLines)
+        //    Debug.WriteLine(l.Command.GetType().Name + " @" + l.Command.GetHashCode());
+        //foreach (var c in cmds)
+        //    Debug.WriteLine("Available: " + c.GetType().Name + " @" + c.GetHashCode());
     }
 
     public void SaveToFile()
@@ -331,12 +413,26 @@ public class MainViewModel : ReactiveObject
 
         // линии программы
         CommandLines = new ObservableCollection<ICommandLine>();
-
-        AddNewRow();
+        VisibleCommandLines = new ObservableCollection<ICommandLine>();
 
         // изначально выбираем первую строку программы
+        commandFunc = new CommandFunc();
+
+        AddNewRow();
+        CommandLines[0].IsVisible = true;
         CommandLines[0].IsSelected = true;
-        commandFunc = new CommandFunc(CommandLines);
+
+        // Подписываемся на добавление новых команд
+        CommandLines.CollectionChanged += (s, e) =>
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ICommandLine newLine in e.NewItems)
+                {
+                    SubscribeToVisibilityLines(newLine);
+                }
+            }
+        };
 
         ConsoleBox = "";
     }
@@ -361,9 +457,9 @@ public class MainViewModel : ReactiveObject
                     Cells[cellViewModel.FindCellByIndex(0)].IsSelected = true;
                 }
 
-                if (commandFunc.FindSelectedLine() != -1)
+                if (commandFunc.FindSelectedLine(CommandLines) != -1)
                 {
-                    CommandLines[commandFunc.FindSelectedLine()].IsSelected = false;
+                    CommandLines[commandFunc.FindSelectedLine(CommandLines)].IsSelected = false;
                     CommandLines[0].IsSelected = true;
                 }
                 else
@@ -403,13 +499,20 @@ public class MainViewModel : ReactiveObject
     {
         int rowNumber = CommandLines.Count; 
         CommandLines.Add(new CommandLine { Number = rowNumber });
+
+        SubscribeToVisibilityLines(CommandLines.Last());
+
+        CommandLines.Last().IsVisible = true;
+        if (commandFunc.CountVisibleRows(CommandLines) > 7)
+            CommandLines[commandFunc.FindFirstVisible(CommandLines)].IsVisible = false;
     }
 
     public void DeleteRow()
     {
-        if (CommandLines.Count > 0)
+        if (CommandLines.Count > 1)
         {
-            int rowNumber = CommandLines.Count; 
+            int rowNumber = CommandLines.Count;
+            CommandLines[rowNumber - 1].IsVisible = false;
             CommandLines.RemoveAt(rowNumber - 1);
         }
     }
@@ -424,5 +527,49 @@ public class MainViewModel : ReactiveObject
     {
         Cells[cellViewModel.FindLeftVisible()].IsVisible = false;
         Cells[cellViewModel.FindRightVisible() + 1].IsVisible = true;
+    }
+
+    private void OnButtonClickLineUp()
+    {
+        try
+        {
+            if (CommandLines[commandFunc.FindFirstVisible(CommandLines) - 1] != null
+                && CommandLines[commandFunc.FindLastVisible(CommandLines)] != null)
+            {
+                CommandLines[commandFunc.FindFirstVisible(CommandLines) - 1].IsVisible = true;
+                CommandLines[commandFunc.FindLastVisible(CommandLines)].IsVisible = false;
+            }
+
+            ConsoleBox = "";
+        }
+        catch(Exception ex) 
+        {
+            ConsoleBox = ex.Message;
+        }
+
+    }
+
+    private void OnButtonClickLineDown()
+    {
+        try
+        {
+            if (commandFunc.FindLastVisible(CommandLines) == CommandLines.Count() - 1)
+            {
+                throw new Exception("Can't go lower than the last row!");
+            }
+
+            if (CommandLines[commandFunc.FindFirstVisible(CommandLines)] != null
+                && CommandLines[commandFunc.FindLastVisible(CommandLines) + 1] != null)
+            {
+                CommandLines[commandFunc.FindFirstVisible(CommandLines)].IsVisible = false;
+                CommandLines[commandFunc.FindLastVisible(CommandLines) + 1].IsVisible = true;
+            }
+
+            ConsoleBox = "";
+        }
+        catch (Exception ex)
+        {
+            ConsoleBox = ex.Message;
+        }
     }
 }

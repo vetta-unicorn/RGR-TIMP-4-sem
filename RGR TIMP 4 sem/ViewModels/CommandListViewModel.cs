@@ -29,20 +29,50 @@ namespace RGR_TIMP_4_sem.ViewModels
         }
     }
 
+    public static class CommandToStringConverter
+    {
+        public static string CommandToString(ICommand command)
+        {
+            return command.NameCommand;
+        }
+    }
+
     public class CommandFunc
     {
-        ObservableCollection<ICommandLine> lines;
-
-        public CommandFunc(ObservableCollection<ICommandLine> lines)
-        {
-            this.lines = lines;
-        }
-
-        public int FindSelectedLine()
+        public int FindSelectedLine(ObservableCollection<ICommandLine> lines)
         {
             for(int i = 0; i < lines.Count; i++)
             {
                 if (lines[i].IsSelected) return i;
+            }
+            return -1;
+        }
+
+        public int CountVisibleRows(ObservableCollection<ICommandLine> lines)
+        {
+            int count = 0;
+            foreach (var line in lines)
+            {
+                if (line.IsVisible) count++;
+            }
+            return count;
+        }
+
+        public int FindFirstVisible(ObservableCollection<ICommandLine> lines)
+        {
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].IsVisible) return i;
+            }
+
+            return -1;
+        }
+
+        public int FindLastVisible(ObservableCollection<ICommandLine> lines)
+        {
+            for (int i = lines.Count - 1; i >= 0; i--)
+            {
+                if (lines[i].IsVisible) return i;
             }
             return -1;
         }

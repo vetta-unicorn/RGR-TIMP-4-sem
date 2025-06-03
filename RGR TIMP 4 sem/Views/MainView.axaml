@@ -130,6 +130,12 @@
 			<Button Content="Go line by line" Background="LightCoral" Command="{Binding LineByLine}" Margin="5"/>
 		</DockPanel>
 
+		<!-- Кнопки перемещения по командным линиям -->
+		<DockPanel Margin="15">
+			<Button Background="LightCoral" Command="{Binding ButtonClickLineUp}" Content="Line Up" Margin="5"/>
+			<Button Background="LightCoral" Command="{Binding ButtonClickLineDown}" Content="Line Down" Margin="5"/>
+		</DockPanel>
+
 		<StackPanel>
 			<Border BorderBrush="Gray" BorderThickness="1" Margin="10">
 				<StackPanel Background="White">
@@ -148,7 +154,7 @@
 						HorizontalAlignment="Center"
 						VerticalAlignment="Top">
 		<Grid>
-			<ItemsControl ItemsSource="{Binding CommandLines, Mode=TwoWay}"> 
+			<ItemsControl ItemsSource="{Binding VisibleCommandLines, Mode=TwoWay}"> 
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
 						<Grid>
@@ -167,6 +173,7 @@
 									  Width="150"
 									  SelectedItem="{Binding Command, Mode=TwoWay}"
 									  ItemsSource="{Binding DataContext.AvailableCommands, RelativeSource={RelativeSource AncestorType=UserControl}}">
+
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<TextBlock Text="{Binding NameCommand}" />
@@ -178,8 +185,6 @@
 									</DataTemplate>
 								</ComboBox.SelectionBoxItemTemplate>
 							</ComboBox>
-
-
 
 							<TextBox Grid.Column="2"
                                      Text="{Binding Str, Mode=TwoWay}"
