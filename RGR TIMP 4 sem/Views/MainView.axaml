@@ -3,13 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:RGR_TIMP_4_sem.ViewModels"
-			 xmlns:local="clr-namespace:RGR_TIMP_4_sem.ViewModels"
+             xmlns:local="clr-namespace:RGR_TIMP_4_sem.ViewModels"
              mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
              x:Class="RGR_TIMP_4_sem.Views.MainView"
              x:DataType="vm:MainViewModel">
 	<Design.DataContext>
-		<!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainViewModel />
 	</Design.DataContext>
 
@@ -17,9 +15,74 @@
 		<local:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
 	</UserControl.Resources>
 
+	<StackPanel Background="LightBlue">
+		
+		<!-- Файловое меню -->
+		<StackPanel Background="White" >
 
-	<StackPanel>
-		<ItemsControl ItemsSource="{Binding Cells}" Margin="50, 30, 50, 0" HorizontalAlignment="Center">
+			<Grid Margin="10">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+				
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="200" />
+					<ColumnDefinition Width="200" />
+					<ColumnDefinition Width="200" />
+				</Grid.ColumnDefinitions>
+				
+				<Button Grid.Row="0" Grid.Column="0"
+						Content="Open File"
+						Command="{Binding OpenFile}"/>
+
+				<Button Grid.Row="1" Grid.Column="0"
+						Content="Create New File"
+						Command="{Binding CreateNewFile}"
+					    IsVisible ="{Binding IsOpenMenuSeen}"/>
+				
+				<Button Grid.Row="2" Grid.Column="0"
+						Content="Open existing file"
+						Command="{Binding OpenExistingFile}"
+					    IsVisible ="{Binding IsOpenMenuSeen}"/>
+				
+				<ComboBox Grid.Row="3" Grid.Column="0"
+						  IsVisible ="{Binding IsOpenMenuSeen}"
+						  ItemsSource="{Binding MyFiles.FileItems}"
+						  SelectedItem="{Binding SelectedFile}"
+						  Width="200"
+						  HorizontalAlignment="Left">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding FileName}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+
+				<Button Grid.Row="0" Grid.Column="1"
+						Content="Save file"
+						Command="{Binding SaveFile}"/>
+
+				<Button Grid.Row="1" Grid.Column="1"
+						Content="Save as..."
+						Command="{Binding OnSaveTo}"
+						IsVisible ="{Binding IsSaveMenuSeen}"/>
+				
+				<TextBox Grid.Row="2" Grid.Column="1"
+						 Text="{Binding SaveFileName, Mode=TwoWay}"
+						 Watermark="fileName" 
+						 IsVisible ="{Binding IsSaveMenuSeen}"/>
+
+
+			</Grid>
+			
+		</StackPanel>
+
+
+		<!-- Индексы ячеек -->
+		<ItemsControl ItemsSource="{Binding VisibleCells}" Background="White" Margin="50, 30, 50, 0" HorizontalAlignment="Center">
 			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
 					<StackPanel Orientation="Horizontal"/>
@@ -29,14 +92,14 @@
 				<DataTemplate>
 					<Border BorderBrush="Black" BorderThickness="1" Margin="2" Width="50" Height="40"
 							Background="{Binding IsSelected, Converter={StaticResource BoolToBrushConverter}}">
-						<TextBlock Text="{Binding Index}" Padding="10"/>
+						<TextBlock Text="{Binding Index, Mode=TwoWay}" Padding="10"/>
 					</Border>
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
 		</ItemsControl>
 
-		<!-- Новая полоска для индексов -->
-		<ItemsControl ItemsSource="{Binding Cells}" Margin="50, 0, 50, 0" HorizontalAlignment="Center">
+		<!-- Значения ячеек -->
+		<ItemsControl ItemsSource="{Binding VisibleCells}" Background="White" Margin="50, 0, 50, 0" HorizontalAlignment="Center">
 			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
 					<StackPanel Orientation="Horizontal"/>
@@ -45,28 +108,100 @@
 			<ItemsControl.ItemTemplate>
 				<DataTemplate>
 					<Border BorderBrush="Black" BorderThickness="1" Margin="2" Height="50" Width="50">
-						<TextBlock Text="{Binding Value}" Padding="10"/>
+						<TextBox Text="{Binding Value, Mode=TwoWay}" Padding="10" />
 					</Border>
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
 		</ItemsControl>
 
-		<DockPanel Margin="5">
-			<Button Command="{Binding ButtonClickCommandLeft}" Content="Left" Width="50" Height="50" DockPanel.Dock="Left" HorizontalAlignment="Left"/>
-			<Button Command="{Binding ButtonClickCommandRight}" Content="Right" Width="50" Height="50" DockPanel.Dock="Right" HorizontalAlignment="Right"/>
+
+
+		<!-- Кнопки перемещения по ленте -->
+		<DockPanel Margin="15">
+			<Button Background="LightCoral" Command="{Binding ButtonClickCommandLeft}" Content="Left" Width="70" Height="30" DockPanel.Dock="Left" HorizontalAlignment="Left"/>
+			<Button Background="LightCoral" Command="{Binding ButtonClickCommandRight}" Content="Right" Width="70" Height="30" DockPanel.Dock="Right" HorizontalAlignment="Right"/>
 		</DockPanel>
 
-		<Grid ColumnDefinitions="*, 7*" RowDefinitions="5*, 5*, 5*, 5*, 5*, 5*" ShowGridLines="True" Margin="4">
-			<TextBlock Text="Number" Grid.Row="0" Grid.Column="0" Height="30"/>
-			<TextBlock Text="Commands:" Grid.Row="0" Grid.Column="1" Height="30"/>
-			<TextBlock Text="1)" Grid.Row="1" Grid.Column="0" Height="30" Width="50"/>
-			<TextBlock Text="Command 1" Grid.Row="1" Grid.Column="1"/>
-			<TextBlock Text="2)" Grid.Row="2" Grid.Column="0" Height="30" Width="50"/>
-			<TextBlock Text="Command 2" Grid.Row="2" Grid.Column="1"/>
+		<!-- Кнопка добавления новой строки и сборки программы-->
+		<DockPanel Margin="10">
+			<Button Content="Add Row" Background="LightCoral" Command="{Binding AddRowCommand}" Margin="5"/>
+			<Button Content="Delete Row" Background="LightCoral" Command="{Binding DeleteRowCommand}" Margin="5"/>
+			<Button Content="Start" Background="LightCoral" Command="{Binding Start}" Margin="5"/>
+			<Button Content="Go line by line" Background="LightCoral" Command="{Binding LineByLine}" Margin="5"/>
+		</DockPanel>
+
+		<!-- Кнопки перемещения по командным линиям -->
+		<DockPanel Margin="15">
+			<Button Background="LightCoral" Command="{Binding ButtonClickLineUp}" Content="Line Up" Margin="5"/>
+			<Button Background="LightCoral" Command="{Binding ButtonClickLineDown}" Content="Line Down" Margin="5"/>
+		</DockPanel>
+
+		<StackPanel>
+			<Border BorderBrush="Gray" BorderThickness="1" Margin="10">
+				<StackPanel Background="White">
+					<TextBlock Text="Console" FontWeight="Bold" Margin="5"/>
+					<TextBlock Text="{Binding ConsoleBox}" Margin="5" TextWrapping="Wrap"/>
+				</StackPanel>
+			</Border>
+		</StackPanel>
+			
+		<!-- Table с CommandLines -->
+		<Border Background="Beige"
+          BorderBrush="Black"
+          BorderThickness="2"
+          Padding="15">
+			<StackPanel Background="White"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Top">
+		<Grid>
+			<ItemsControl ItemsSource="{Binding VisibleCommandLines, Mode=TwoWay}"> 
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="50" /> 
+								<ColumnDefinition Width="150" /> 
+								<ColumnDefinition Width="200" /> 
+								<ColumnDefinition Width="400" /> 
+							</Grid.ColumnDefinitions>
+
+							<TextBlock Grid.Column="0"
+									   Text="{Binding Number, Mode=TwoWay}"
+									   Background="{Binding IsSelected, Converter={StaticResource BoolToBrushConverter}}" />
+
+							<ComboBox Grid.Column="1"
+									  Width="150"
+									  SelectedItem="{Binding Command, Mode=TwoWay}"
+									  ItemsSource="{Binding DataContext.AvailableCommands, RelativeSource={RelativeSource AncestorType=UserControl}}">
+
+								<ComboBox.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding NameCommand}" />
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+								<ComboBox.SelectionBoxItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding NameCommand}" />
+									</DataTemplate>
+								</ComboBox.SelectionBoxItemTemplate>
+							</ComboBox>
+
+							<TextBox Grid.Column="2"
+                                     Text="{Binding Str, Mode=TwoWay}"
+                                     Watermark="J or J1, J2" />
+							<TextBox Grid.Column="3"
+                                     Text="{Binding Comments, Mode=TwoWay}"
+                                     Watermark="Comment" />
+						</Grid>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+
+			
 		</Grid>
-
+		</StackPanel>
+		</Border>
 	</StackPanel>
-
-
-
 </UserControl>
+
+
