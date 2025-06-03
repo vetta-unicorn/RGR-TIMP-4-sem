@@ -95,7 +95,7 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _commandNames, value);
     }
 
-    public List<ICommand> AvailableCommands { get; set; }
+    public List<ICommand> AvailableCommands = CommandList.Instance();
     
 
     // для вывода ошибок

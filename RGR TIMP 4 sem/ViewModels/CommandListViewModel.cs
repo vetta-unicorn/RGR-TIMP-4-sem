@@ -9,25 +9,25 @@ using RGR_TIMP_4_sem.Models;
 
 namespace RGR_TIMP_4_sem.ViewModels
 {
-    //public class CommandList
-    //{
-    //    public static CommandList Instance { get; } = new CommandList();
+    public class CommandList
+    {
+        public static CommandList Instance { get; } = new CommandList();
 
-    //    public List<ICommand> Commands { get; }
+        public List<ICommand> Commands { get; }
 
-    //    public CommandList()
-    //    {
-    //        Commands = new List<ICommand>
-    //        {
-    //            new LeftMove(),
-    //            new RightMove(),
-    //            new One(),
-    //            new Zero(),
-    //            new Stop(),
-    //            new Question()
-    //        };
-    //    }
-    //}
+        public CommandList()
+        {
+            Commands = new List<ICommand>
+            {
+                new LeftMove(),
+                new RightMove(),
+                new One(),
+                new Zero(),
+                new Stop(),
+                new Question()
+            };
+        }
+    }
 
     public static class CommandToStringConverter
     {

@@ -180,7 +180,7 @@
 								</ComboBox.ItemTemplate>
 								<ComboBox.SelectionBoxItemTemplate>
 									<DataTemplate>
-										<TextBlock Text="{Binding NameCommand}" />
+										<TextBlock Text="{Binding NameCommand.DisplayText}" />
 									</DataTemplate>
 								</ComboBox.SelectionBoxItemTemplate>
 							</ComboBox>
