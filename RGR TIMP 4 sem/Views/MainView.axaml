@@ -169,20 +169,15 @@
 									   Text="{Binding Number, Mode=TwoWay}"
 									   Background="{Binding IsSelected, Converter={StaticResource BoolToBrushConverter}}" />
 
-							<ComboBox Grid.Column="1"
+							<ComboBox Grid.Column="1" 
 									  Width="150"
 									  SelectedItem="{Binding Command, Mode=TwoWay}"
 									  ItemsSource="{Binding DataContext.AvailableCommands, RelativeSource={RelativeSource AncestorType=UserControl}}">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
-										<TextBlock Text="{Binding NameCommand}" />
+										<TextBlock Text="{Binding NameCommand, Mode=TwoWay}" />
 									</DataTemplate>
 								</ComboBox.ItemTemplate>
-								<ComboBox.SelectionBoxItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding NameCommand.DisplayText}" />
-									</DataTemplate>
-								</ComboBox.SelectionBoxItemTemplate>
 							</ComboBox>
 
 

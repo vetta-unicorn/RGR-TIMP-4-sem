@@ -19,7 +19,7 @@ namespace RGR_TIMP_4_sem.Models
         /// </summary>
         /// <param name="indexMove"> до какой строки делать за 1 нажатие, если -1 то делать весь алгоритм</param>
         /// <param name="Cells"> ObservableCollection клеток (всех) </param>
-        /// <param name="Table"> ObservableCollection строк алгоритма</param>
+        /// <param name="CommandLine"> ObservableCollection строк алгоритма</param>
         /// <returns>возвращает строку если выполнено, 
         /// 0 если кончились строки, 
         /// -1 если бесконечный цикл</returns>
